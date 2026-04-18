@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 4 Slides — ENG 6812</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap">
+  <style>
+    :root { --primary:#478a7a; --accent:#2e6b5e; --body:'DM Sans',Tahoma,sans-serif; --handwriting:'Caveat',cursive; }
+    .reveal { font-family:var(--body); }
+    .reveal .slides section { text-align:left; }
+    .reveal h1,.reveal h2,.reveal h3 { color:var(--accent); font-family:var(--body); text-transform:none; letter-spacing:-0.01em; }
+    .reveal p,.reveal li { font-size:0.88em; }
+    .reveal ul li { margin-bottom:0.4em; }
+    .slide-title { background-color:var(--primary)!important; background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(135deg,#2e6b5e 0%,#478a7a 100%)!important; background-size:28px 28px,28px 28px,100% 100%!important; color:#f0faf7!important; }
+    .slide-title h1 { color:#f0faf7!important; font-size:1.6em!important; }
+    .slide-title h2 { color:#c8e8e2!important; }
+    .slide-title .script { font-family:var(--handwriting); font-size:1.3em; color:#e0f4f0; display:block; margin-top:0.5em; }
+    .slide-title .nav-links { margin-top:1.2em; display:flex; gap:1em; flex-wrap:wrap; }
+    .slide-title .nav-links a { color:#c8e8e2; font-size:0.7em; border:1px solid rgba(255,255,255,0.3); padding:0.25em 0.75em; border-radius:20px; text-decoration:none; }
+    .week-badge { display:inline-block; font-family:var(--handwriting); font-size:0.9em; color:var(--primary); background:#e6f4f0; padding:0.1em 0.6em; border-radius:20px; margin-bottom:0.5em; }
+    .highlight { background:#e6f4f0; border-left:3px solid var(--primary); padding:0.4em 0.75em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.4em 0; }
+    .story-prompt { background:linear-gradient(135deg,#e6f4f0 0%,#d4ede7 100%); border:1px solid #c8dbd7; border-radius:6px; padding:1em; text-align:center; }
+    .story-prompt .script { font-family:var(--handwriting); font-size:1.4em; color:var(--accent); }
+    .pres-prompt { background:#f8f5ee; border:1px solid #e0d8c0; border-radius:6px; padding:1em; text-align:center; }
+    .pres-prompt .script { font-family:var(--handwriting); font-size:1.4em; color:#8b6914; }
+    .lab-link-box { text-align:center; margin-top:1em; }
+    .lab-link-box a { background:var(--primary); color:white; padding:0.4em 1.2em; border-radius:4px; text-decoration:none; font-size:0.85em; }
+    .slide-content h2 { border-bottom:2px solid #c8dbd7; padding-bottom:0.3em; margin-bottom:0.5em; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <section class="slide-title">
+      <span class="week-badge" style="background:rgba(255,255,255,0.15);color:#f0faf7;">Week 4</span>
+      <h1>Archival Research</h1>
+      <h2>ENG 6812 — Research Methods for Texts &amp; Technology</h2>
+      <span class="script">what the archive includes — and what it leaves out</span>
+      <div class="nav-links">
+        <a href="../index.html#week4">↖ Syllabus</a>
+        <a href="../labs/week04.html">⬡ Week 4 Lab</a>
+        <a href="index.html">All Slides</a>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="slide-content">
+      <span class="week-badge">Week 4 — Readings</span>
+      <h2>Tonight's Readings</h2>
+      <ul>
+        <li><strong>Vogt et al.</strong> (2012). When to use archival designs (pp. 103–124). [PDF in Webcourses]</li>
+        <li><strong>Vogt et al.</strong> (2014). Coding archival data (pp. 129–150). [PDF in Webcourses]</li>
+        <li><strong>Owens, T.</strong> (2018). What is digital preservation? In <em>The theory and craft of digital preservation</em> (pp. 1–28). [open access]</li>
+        <li><strong>Optional:</strong> Beiler &amp; Stoltzfus (2023). Settlers and refugees. <em>Journal of Mennonite Studies, 41</em>(1). [UCF library] — recommended for Public History and manuscript-focused students</li>
+      </ul>
+    </section>
+
+    <!-- What Is Archival Research? -->
+    <section class="slide-content">
+      <span class="week-badge">Week 4</span>
+      <h2>What Is Archival Research?</h2>
+      <ul>
+        <li>Using existing records — documents, images, data — as primary sources</li>
+        <li>Sources were created for purposes <em>other than</em> your research question</li>
+        <li>Includes physical archives, digitized collections, born-digital repositories, data archives</li>
+        <li>Key question: who created this record, for what purpose, and what did they leave out?</li>
+      </ul>
+      <div class="highlight">Archives are not neutral repositories — they reflect the priorities of the institutions and people who built them.</div>
+    </section>
+
+    <!-- Archival Design Types -->
+    <section class="slide-content">
+      <span class="week-badge">Week 4</span>
+      <h2>Archival Design Types</h2>
+      <ul>
+        <li><strong>Historical analysis</strong> — documents, letters, newspapers, legal records</li>
+        <li><strong>Content analysis</strong> — systematic coding of texts or images in the archive</li>
+        <li><strong>Secondary data analysis</strong> — data collected by others (census, government surveys)</li>
+        <li><strong>Digital archives</strong> — born-digital sources, web archives, social media datasets</li>
+      </ul>
+    </section>
+
+    <!-- Digital Preservation -->
+    <section class="slide-content">
+      <span class="week-badge">Week 4 — Owens</span>
+      <h2>Digital Preservation (Owens 2018)</h2>
+      <ul>
+        <li>Digital preservation ≠ just keeping files alive — it's maintaining access, context, and authenticity over time</li>
+        <li>Formats degrade; platforms disappear; links break</li>
+        <li>Before using a digital source as data: assess its provenance, format history, and curation decisions</li>
+        <li>What decisions were made about what to digitize? Who funded that work?</li>
+      </ul>
+      <div class="highlight">For DH and Public History students especially: the "digital" in digital archives is itself a methodological decision.</div>
+    </section>
+
+    <!-- Coding Archival Data -->
+    <section class="slide-content">
+      <span class="week-badge">Week 4</span>
+      <h2>Coding Archival Data (Vogt et al. 2014)</h2>
+      <ul>
+        <li>Develop a coding scheme before analyzing (or use grounded approach)</li>
+        <li>Document your decisions — what counts as an instance of each code?</li>
+        <li>Intercoder reliability: have more than one person code a sample</li>
+        <li>Track what you <em>cannot</em> code — absences and gaps are data too</li>
+      </ul>
+    </section>
+
+    <!-- Student Presentation -->
+    <section class="slide-content">
+      <div class="pres-prompt">
+        <span class="pres-prompt" style="display:block;"></span>
+        <span class="script" style="font-family:'Caveat',cursive;font-size:1.4em;color:#8b6914;">Student Presentation: Archival Research</span>
+        <p style="margin-top:0.75em;font-size:0.85em;color:#5a7068"><em>[Student presenter to lead this section.]</em></p>
+        <p style="font-size:0.8em;color:#5a7068">Come prepared with 2 written questions for the presenter.</p>
+      </div>
+    </section>
+
+    <!-- Dr. Johnson's Story -->
+    <section class="slide-content">
+      <div class="story-prompt">
+        <span class="script">Dr. Johnson's Story</span>
+        <p style="margin-top:0.75em;font-size:0.85em;color:#5a7068"><em>[This slide is for Dr. Johnson to complete.]</em></p>
+      </div>
+    </section>
+
+    <!-- Today's Lab -->
+    <section class="slide-content">
+      <span class="week-badge">Week 4 — Lab</span>
+      <h2>Today's Lab</h2>
+      <p>Each group receives a digitized primary source from Florida Memory, Chronicling America, or DPLA. Analyze what the document can and cannot tell you.</p>
+      <div class="highlight">Questions: What is absent? What would a researcher need to establish before treating this as data? What does Owens change about how you'd cite it?</div>
+      <div class="lab-link-box" style="margin-top:1.25em;">
+        <a href="../labs/week04.html">→ Week 4 Lab Page (full prompt)</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>Reveal.initialize({ hash:true, transition:'slide', slideNumber:'c/t', controls:true, progress:true, center:false, width:960, height:600 });</script>
+</body>
+</html>

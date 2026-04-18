@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 11 Slides — ENG 6812</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap">
+  <style>
+    :root { --primary:#478a7a; --accent:#2e6b5e; --body:'DM Sans',Tahoma,sans-serif; --handwriting:'Caveat',cursive; }
+    .reveal { font-family:var(--body); }
+    .reveal .slides section { text-align:left; }
+    .reveal h1,.reveal h2,.reveal h3 { color:var(--accent); font-family:var(--body); text-transform:none; letter-spacing:-0.01em; }
+    .reveal p,.reveal li { font-size:0.88em; }
+    .reveal ul li { margin-bottom:0.4em; }
+    .slide-title { background-color:var(--primary)!important; background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(135deg,#2e6b5e 0%,#478a7a 100%)!important; background-size:28px 28px,28px 28px,100% 100%!important; color:#f0faf7!important; }
+    .slide-title h1 { color:#f0faf7!important; font-size:1.4em!important; }
+    .slide-title h2 { color:#c8e8e2!important; }
+    .slide-title .script { font-family:var(--handwriting); font-size:1.3em; color:#e0f4f0; display:block; margin-top:0.5em; }
+    .slide-title .nav-links { margin-top:1.2em; display:flex; gap:1em; flex-wrap:wrap; }
+    .slide-title .nav-links a { color:#c8e8e2; font-size:0.7em; border:1px solid rgba(255,255,255,0.3); padding:0.25em 0.75em; border-radius:20px; text-decoration:none; }
+    .week-badge { display:inline-block; font-family:var(--handwriting); font-size:0.9em; color:var(--primary); background:#e6f4f0; padding:0.1em 0.6em; border-radius:20px; margin-bottom:0.5em; }
+    .highlight { background:#e6f4f0; border-left:3px solid var(--primary); padding:0.4em 0.75em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.4em 0; }
+    .irb-box { background:#fff8e8; border:1px solid #e8d480; border-radius:6px; padding:0.75em 1em; margin:0.4em 0; }
+    .irb-box h4 { color:#8b6914; margin-bottom:0.3em; font-size:0.9em; }
+    .lab-link-box { text-align:center; margin-top:1em; }
+    .lab-link-box a { background:var(--primary); color:white; padding:0.4em 1.2em; border-radius:4px; text-decoration:none; font-size:0.85em; }
+    .slide-content h2 { border-bottom:2px solid #c8dbd7; padding-bottom:0.3em; margin-bottom:0.5em; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <section class="slide-title">
+      <span class="week-badge" style="background:rgba(255,255,255,0.15);color:#f0faf7;">Week 11</span>
+      <h1>Methods Synthesis and IRB Workshop</h1>
+      <h2>ENG 6812 — Research Methods for Texts &amp; Technology</h2>
+      <span class="script">you've learned nine methods — now what do you actually do?</span>
+      <div class="nav-links">
+        <a href="../index.html#week11">↖ Syllabus</a>
+        <a href="../labs/week11.html">⬡ Week 11 Lab</a>
+        <a href="index.html">All Slides</a>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="slide-content">
+      <span class="week-badge">Week 11 — Readings</span>
+      <h2>Tonight's Readings</h2>
+      <ul>
+        <li><strong>Belcher, W. L.</strong> (2019). Week 0. In <em>Writing your journal article in twelve weeks</em> (pp. 390–400). University of Chicago Press. [UCF library]</li>
+        <li><strong>Drucker, J.</strong> (2021). Why digital humanities. In <em>The digital humanities coursebook</em> (pp. 3–22). Routledge. [UCF library]</li>
+        <li><strong>D'Ignazio &amp; Klein</strong> (2020). Introduction: Why data science needs feminism. In <em>Data feminism</em>. MIT Press. [open access]</li>
+      </ul>
+      <p style="font-size:0.8em;color:#5a7068;margin-top:0.3em">⊙ <strong>Due before class:</strong> Methods short list</p>
+    </section>
+
+    <!-- Synthesis Frame -->
+    <section class="slide-content">
+      <span class="week-badge">Week 11</span>
+      <h2>A Synthesis Frame: Data Feminism</h2>
+      <ul>
+        <li>D'Ignazio &amp; Klein: data science is not neutral — who counts, who gets counted, and who does the counting are political choices</li>
+        <li>Apply this lens across <em>all</em> the methods we've studied: whose knowledge does each method privilege? What gets excluded from each framework?</li>
+        <li>Methods are not tools — they are arguments about what counts as evidence</li>
+      </ul>
+      <div class="highlight">After nine weeks of methods: which ones make knowledge visible, and for whom?</div>
+    </section>
+
+    <!-- IRB Overview -->
+    <section class="slide-content">
+      <span class="week-badge">Week 11 — IRB Workshop</span>
+      <h2>IRB Overview</h2>
+      <ul>
+        <li>IRB (Institutional Review Board) reviews research involving human participants</li>
+        <li>"Exempt" ≠ no review — it means exempt from certain federal regulations; IRB still determines this</li>
+        <li>Three review levels: Exempt, Expedited, Full Board</li>
+      </ul>
+      <div class="highlight">You cannot determine your own exemption — IRB does that.</div>
+    </section>
+
+    <!-- IRB Key Concepts -->
+    <section class="slide-content">
+      <span class="week-badge">Week 11 — IRB</span>
+      <h2>IRB Key Concepts</h2>
+      <div class="irb-box">
+        <h4>Anonymous</h4>
+        <p>No one — not even the researcher — can identify who participated.</p>
+      </div>
+      <div class="irb-box">
+        <h4>Confidential</h4>
+        <p>The researcher knows identities but will not disclose them.</p>
+      </div>
+      <div class="irb-box">
+        <h4>Privacy</h4>
+        <p>A person's desire to control access to information about themselves — relevant even for public data.</p>
+      </div>
+    </section>
+
+    <!-- IRB Form Types -->
+    <section class="slide-content">
+      <span class="week-badge">Week 11 — IRB</span>
+      <h2>IRB Protocol Components</h2>
+      <ul>
+        <li><strong>Protocol</strong> — full description of the study from start to end</li>
+        <li><strong>Recruitment materials</strong> — how will you find participants?</li>
+        <li><strong>Consent form</strong> — what do participants agree to?</li>
+        <li><strong>Survey/questionnaire</strong> — all instruments must be reviewed</li>
+        <li><strong>Data analysis plan</strong> — how will data be stored and protected?</li>
+        <li><strong>Technology explanation</strong> — if software/platforms are involved</li>
+      </ul>
+      <p style="font-size:0.8em;color:#5a7068;margin-top:0.3em">One dissertation study = potentially 10+ documents submitted to IRB.</p>
+    </section>
+
+    <!-- Why DH -->
+    <section class="slide-content">
+      <span class="week-badge">Week 11 — Drucker</span>
+      <h2>Why Digital Humanities? (Drucker 2021)</h2>
+      <ul>
+        <li>DH as a methodological project: using computational tools to ask humanistic questions</li>
+        <li>What distinguishes DH methods from other digital research? The commitment to interpretation, not just pattern detection</li>
+        <li>After nine methods: where does DH fit? What can it do that other methods can't?</li>
+      </ul>
+    </section>
+
+    <!-- Today's Lab -->
+    <section class="slide-content">
+      <span class="week-badge">Week 11 — Lab</span>
+      <h2>Today's Lab: Methods Selection Activity</h2>
+      <p>Each group receives a one-paragraph research scenario. Produce: (1) which method(s) you'd use and why, (2) likely IRB level and main ethical exposure, (3) a 3-sentence methods paragraph in the register of a proposal.</p>
+      <div class="highlight">Debrief: groups read methods paragraphs aloud. Push back on hedging or vagueness.</div>
+      <div class="lab-link-box" style="margin-top:1em;">
+        <a href="../labs/week11.html">→ Week 11 Lab Page (full prompt)</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>Reveal.initialize({ hash:true, transition:'slide', slideNumber:'c/t', controls:true, progress:true, center:false, width:960, height:600 });</script>
+</body>
+</html>

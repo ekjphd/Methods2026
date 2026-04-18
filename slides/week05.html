@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 5 Slides — ENG 6812</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap">
+  <style>
+    :root { --primary:#478a7a; --accent:#2e6b5e; --body:'DM Sans',Tahoma,sans-serif; --handwriting:'Caveat',cursive; }
+    .reveal { font-family:var(--body); }
+    .reveal .slides section { text-align:left; }
+    .reveal h1,.reveal h2,.reveal h3 { color:var(--accent); font-family:var(--body); text-transform:none; letter-spacing:-0.01em; }
+    .reveal p,.reveal li { font-size:0.88em; }
+    .reveal ul li { margin-bottom:0.4em; }
+    .slide-title { background-color:var(--primary)!important; background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(135deg,#2e6b5e 0%,#478a7a 100%)!important; background-size:28px 28px,28px 28px,100% 100%!important; color:#f0faf7!important; }
+    .slide-title h1 { color:#f0faf7!important; font-size:1.6em!important; }
+    .slide-title h2 { color:#c8e8e2!important; }
+    .slide-title .script { font-family:var(--handwriting); font-size:1.3em; color:#e0f4f0; display:block; margin-top:0.5em; }
+    .slide-title .nav-links { margin-top:1.2em; display:flex; gap:1em; flex-wrap:wrap; }
+    .slide-title .nav-links a { color:#c8e8e2; font-size:0.7em; border:1px solid rgba(255,255,255,0.3); padding:0.25em 0.75em; border-radius:20px; text-decoration:none; }
+    .week-badge { display:inline-block; font-family:var(--handwriting); font-size:0.9em; color:var(--primary); background:#e6f4f0; padding:0.1em 0.6em; border-radius:20px; margin-bottom:0.5em; }
+    .highlight { background:#e6f4f0; border-left:3px solid var(--primary); padding:0.4em 0.75em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.4em 0; }
+    .story-prompt { background:linear-gradient(135deg,#e6f4f0 0%,#d4ede7 100%); border:1px solid #c8dbd7; border-radius:6px; padding:1em; text-align:center; }
+    .story-prompt .script { font-family:var(--handwriting); font-size:1.4em; color:var(--accent); }
+    .pres-prompt { background:#f8f5ee; border:1px solid #e0d8c0; border-radius:6px; padding:0.75em 1em; text-align:center; margin:0.5em 0; }
+    .lab-link-box { text-align:center; margin-top:1em; }
+    .lab-link-box a { background:var(--primary); color:white; padding:0.4em 1.2em; border-radius:4px; text-decoration:none; font-size:0.85em; }
+    .slide-content h2 { border-bottom:2px solid #c8dbd7; padding-bottom:0.3em; margin-bottom:0.5em; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1em; margin-top:0.5em; }
+    .col-box { background:#f0f7f5; border:1px solid #c8dbd7; border-radius:6px; padding:0.75em; }
+    .col-box h4 { color:var(--primary); font-family:var(--body); margin-bottom:0.3em; font-size:0.9em; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <section class="slide-title">
+      <span class="week-badge" style="background:rgba(255,255,255,0.15);color:#f0faf7;">Week 5</span>
+      <h1>Platform Analysis and Social Media Research</h1>
+      <h2>ENG 6812 — Research Methods for Texts &amp; Technology</h2>
+      <span class="script">platforms aren't neutral pipes — they're arguments</span>
+      <div class="nav-links">
+        <a href="../index.html#week5">↖ Syllabus</a>
+        <a href="../labs/week05.html">⬡ Week 5 Lab</a>
+        <a href="index.html">All Slides</a>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="slide-content">
+      <span class="week-badge">Week 5 — Readings</span>
+      <h2>Tonight's Readings</h2>
+      <ul>
+        <li><strong>Brock, A.</strong> (2018). Critical technocultural discourse analysis. <em>New Media and Society, 20</em>(3). [UCF library]</li>
+        <li><strong>Noble, S. U.</strong> (2018). A society, searching. In <em>Algorithms of oppression</em> (pp. 1–14). [UCF library]</li>
+        <li><strong>Carah &amp; Dobson</strong> (2016). Algorithmic hotness. <em>Social Media and Society, 2</em>(4). [open access]</li>
+        <li><strong>Fiesler &amp; Proferes</strong> (2018). Participant perceptions of Twitter research ethics. <em>Social Media and Society, 4</em>(1). [open access]</li>
+      </ul>
+    </section>
+
+    <!-- CTDA -->
+    <section class="slide-content">
+      <span class="week-badge">Week 5 — Brock</span>
+      <h2>Critical Technocultural Discourse Analysis (CTDA)</h2>
+      <ul>
+        <li>Examines how technology and culture co-constitute each other</li>
+        <li>Attends to how race, power, and identity are embedded in interface design and platform affordances</li>
+        <li>Not just "what does the content say" — also "what does the platform allow, foreground, or suppress?"</li>
+        <li>Discourse at the level of the platform itself, not just user-generated text</li>
+      </ul>
+    </section>
+
+    <!-- Algorithms of Oppression -->
+    <section class="slide-content">
+      <span class="week-badge">Week 5 — Noble</span>
+      <h2>Algorithms of Oppression (Noble 2018)</h2>
+      <ul>
+        <li>Search algorithms are not neutral information retrieval tools</li>
+        <li>Commercial logic shapes what appears — and what is marginalized</li>
+        <li>Noble: searching for "Black girls" returned harmful results — this is a methodological problem, not just a content problem</li>
+        <li>For researchers: using search as a data collection method requires accounting for algorithmic bias</li>
+      </ul>
+    </section>
+
+    <!-- Algorithmic Hotness -->
+    <section class="slide-content">
+      <span class="week-badge">Week 5 — Carah &amp; Dobson</span>
+      <h2>Algorithmic Hotness</h2>
+      <ul>
+        <li>Platforms reward certain kinds of bodies and aesthetics with visibility</li>
+        <li>"Hotness" as a platform affordance — content optimized for engagement often reproduces normative identity performance</li>
+        <li>Method: track what gets amplified and theorize what that amplification logic encodes</li>
+      </ul>
+      <div class="highlight">This is platform analysis, not content analysis — the unit of study is the visibility logic, not the individual posts.</div>
+    </section>
+
+    <!-- Social Media Ethics -->
+    <section class="slide-content">
+      <span class="week-badge">Week 5 — Fiesler &amp; Proferes</span>
+      <h2>Ethics of Social Media Research</h2>
+      <ul>
+        <li>Users often don't know their public posts are being used for research</li>
+        <li>Perception of "publicness" varies — Twitter users may not expect academic analysis</li>
+        <li>AoIR guidelines apply: consider context, vulnerability, power dynamics</li>
+        <li>Even publicly available data requires ethical consideration of how it's used</li>
+      </ul>
+    </section>
+
+    <!-- Student Presentations -->
+    <section class="slide-content">
+      <div class="pres-prompt">
+        <span style="font-family:'Caveat',cursive;font-size:1.4em;color:#8b6914;">Student Presentation 1: Platform Analysis</span>
+        <p style="margin-top:0.5em;font-size:0.85em;color:#5a7068"><em>[Student presenter to lead — 20 min including Q&amp;A.]</em></p>
+      </div>
+      <div class="pres-prompt" style="margin-top:0.75em;background:#f5f0f8;border-color:#d0c8e0;">
+        <span style="font-family:'Caveat',cursive;font-size:1.4em;color:#6b3d8b;">Student Presentation 2: Social Media Research</span>
+        <p style="margin-top:0.5em;font-size:0.85em;color:#5a7068"><em>[Student presenter to lead — 20 min including Q&amp;A.]</em></p>
+      </div>
+      <p style="font-size:0.75em;color:#5a7068;margin-top:0.5em">Come prepared with 2 written questions for each presenter.</p>
+    </section>
+
+    <!-- Dr. Johnson's Story -->
+    <section class="slide-content">
+      <div class="story-prompt">
+        <span class="script">Dr. Johnson's Story</span>
+        <p style="margin-top:0.75em;font-size:0.85em;color:#5a7068"><em>[This slide is for Dr. Johnson to complete.]</em></p>
+      </div>
+    </section>
+
+    <!-- Today's Lab -->
+    <section class="slide-content">
+      <span class="week-badge">Week 5 — Lab</span>
+      <h2>Today's Lab</h2>
+      <p>All groups analyze the same public social media account or thread. Half apply Brock's CTDA; half apply Carah &amp; Dobson's algorithmic hotness lens. Pairs compare findings in debrief.</p>
+      <div class="lab-link-box" style="margin-top:1.25em;">
+        <a href="../labs/week05.html">→ Week 5 Lab Page (full prompt)</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>Reveal.initialize({ hash:true, transition:'slide', slideNumber:'c/t', controls:true, progress:true, center:false, width:960, height:600 });</script>
+</body>
+</html>

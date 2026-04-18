@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 2 Slides — ENG 6812</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap">
+  <style>
+    :root { --primary:#478a7a; --accent:#2e6b5e; --body:'DM Sans',Tahoma,sans-serif; --handwriting:'Caveat',cursive; }
+    .reveal { font-family:var(--body); }
+    .reveal .slides section { text-align:left; }
+    .reveal h1,.reveal h2,.reveal h3 { color:var(--accent); font-family:var(--body); text-transform:none; letter-spacing:-0.01em; }
+    .reveal p,.reveal li { font-size:0.88em; }
+    .reveal ul li { margin-bottom:0.4em; }
+    .slide-title { background-color:var(--primary)!important; background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(135deg,#2e6b5e 0%,#478a7a 100%)!important; background-size:28px 28px,28px 28px,100% 100%!important; color:#f0faf7!important; }
+    .slide-title h1 { color:#f0faf7!important; font-size:1.6em!important; }
+    .slide-title h2 { color:#c8e8e2!important; }
+    .slide-title .script { font-family:var(--handwriting); font-size:1.3em; color:#e0f4f0; display:block; margin-top:0.5em; }
+    .slide-title .nav-links { margin-top:1.2em; display:flex; gap:1em; flex-wrap:wrap; }
+    .slide-title .nav-links a { color:#c8e8e2; font-size:0.7em; border:1px solid rgba(255,255,255,0.3); padding:0.25em 0.75em; border-radius:20px; text-decoration:none; }
+    .week-badge { display:inline-block; font-family:var(--handwriting); font-size:0.9em; color:var(--primary); background:#e6f4f0; padding:0.1em 0.6em; border-radius:20px; margin-bottom:0.5em; }
+    .highlight { background:#e6f4f0; border-left:3px solid var(--primary); padding:0.4em 0.75em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.4em 0; }
+    .story-prompt { background:linear-gradient(135deg,#e6f4f0 0%,#d4ede7 100%); border:1px solid #c8dbd7; border-radius:6px; padding:1em; text-align:center; }
+    .story-prompt .script { font-family:var(--handwriting); font-size:1.4em; color:var(--accent); }
+    .lab-link-box { text-align:center; margin-top:1em; }
+    .lab-link-box a { background:var(--primary); color:white; padding:0.4em 1.2em; border-radius:4px; text-decoration:none; font-size:0.85em; }
+    .slide-content h2 { border-bottom:2px solid #c8dbd7; padding-bottom:0.3em; margin-bottom:0.5em; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1em; margin-top:0.5em; }
+    .col-box { background:#f0f7f5; border:1px solid #c8dbd7; border-radius:6px; padding:0.75em; }
+    .col-box h4 { color:var(--primary); font-family:var(--body); margin-bottom:0.3em; font-size:0.9em; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <section class="slide-title">
+      <span class="week-badge" style="background:rgba(255,255,255,0.15);color:#f0faf7;">Week 2</span>
+      <h1>Experimental Research — Pre/Posttest</h1>
+      <h2>ENG 6812 — Research Methods for Texts &amp; Technology</h2>
+      <span class="script">does seeing X change thinking about Y?</span>
+      <div class="nav-links">
+        <a href="../index.html#week2">↖ Syllabus</a>
+        <a href="../labs/week02.html">⬡ Week 2 Lab</a>
+        <a href="index.html">All Slides</a>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="slide-content">
+      <span class="week-badge">Week 2 — Readings</span>
+      <h2>Tonight's Readings</h2>
+      <ul>
+        <li><strong>Vogt, Gardner, &amp; Haeffele</strong> (2012). When to use experimental designs. In <em>When to use what research design</em> (pp. 45–66). [PDF in Webcourses]</li>
+        <li><strong>Franzke et al. / AoIR</strong> (2020). Internet research: Ethical guidelines 3.0 (pp. 1–31). [open access]</li>
+        <li><strong>Markham, A.</strong> (2012). Fabrication as ethical practice. <em>Information, Communication and Society, 15</em>(3). [UCF library]</li>
+      </ul>
+    </section>
+
+    <!-- What is an Experiment? -->
+    <section class="slide-content">
+      <span class="week-badge">Week 2</span>
+      <h2>What Is an Experiment?</h2>
+      <ul>
+        <li>Researcher introduces a <strong>treatment</strong> (independent variable) and measures its effect on an <strong>outcome</strong> (dependent variable)</li>
+        <li>Random assignment separates experimental from control group</li>
+        <li>Goal: establish <strong>causal</strong> relationships, not just correlations</li>
+        <li>Pre/posttest design: measure before and after the intervention</li>
+      </ul>
+      <div class="highlight">Experiments are strong on <em>internal validity</em> but can struggle with <em>external validity</em> — results may not generalize beyond the lab.</div>
+    </section>
+
+    <!-- Pretest / Posttest Design -->
+    <section class="slide-content">
+      <span class="week-badge">Week 2</span>
+      <h2>Pretest and Posttest Design</h2>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>Pretest</h4>
+          <ul>
+            <li>Establishes baseline</li>
+            <li>Must match posttest construct</li>
+            <li>Can introduce sensitization (testing effect)</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>Posttest</h4>
+          <ul>
+            <li>Measures change after treatment</li>
+            <li>Compared against control group</li>
+            <li>Same instrument as pretest, or parallel form</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:0.75em;font-size:0.8em;color:#5a7068">Classic example: measure reading comprehension → apply annotation intervention → re-measure comprehension.</p>
+    </section>
+
+    <!-- Threats to Validity -->
+    <section class="slide-content">
+      <span class="week-badge">Week 2</span>
+      <h2>Threats to Internal Validity</h2>
+      <ul>
+        <li><strong>Maturation</strong> — participants change over time regardless of treatment</li>
+        <li><strong>History</strong> — external events happen during the study</li>
+        <li><strong>Testing effect</strong> — taking the pretest changes performance on the posttest</li>
+        <li><strong>Selection bias</strong> — groups differ before treatment begins</li>
+        <li><strong>Attrition</strong> — different kinds of people drop out across conditions</li>
+      </ul>
+    </section>
+
+    <!-- AoIR Ethics & Markham -->
+    <section class="slide-content">
+      <span class="week-badge">Week 2 — Ethics</span>
+      <h2>Research Ethics: AoIR + Markham</h2>
+      <ul>
+        <li>AoIR 3.0: ethical treatment of human participants in internet research — informed consent, minimizing harm, privacy</li>
+        <li>Markham: "fabrication" as <em>methodological response</em>, not misconduct — protecting participants through anonymization, compositing</li>
+        <li>Ethics isn't just a compliance checklist — it's a design choice that shapes what counts as data</li>
+      </ul>
+      <div class="highlight">For T&amp;T researchers: online participation (posts, profiles, DMs) raises ongoing questions about what is "public" data.</div>
+    </section>
+
+    <!-- Dr. Johnson's Story — ELLE -->
+    <section class="slide-content">
+      <span class="week-badge">Week 2 — Instructor Story</span>
+      <h2>Dr. Johnson's Story: ELLE</h2>
+      <ul>
+        <li>ELLE: Enjoyable Language Learning Experience — a language-learning video game</li>
+        <li>4-condition experiment: VR, PC side-scroller, PC over-the-shoulder, control</li>
+        <li>First attempt: multiple-choice posttest → what did the test actually measure?</li>
+        <li>Participant limitations forced design changes</li>
+        <li>Lesson: the experiment you design ≠ the experiment you run</li>
+      </ul>
+    </section>
+
+    <!-- Dr. Johnson's Story placeholder -->
+    <section class="slide-content">
+      <div class="story-prompt">
+        <span class="script">Dr. Johnson's Story</span>
+        <p style="margin-top:0.75em;font-size:0.85em;color:#5a7068"><em>[Additional story content — Dr. Johnson to complete.]</em></p>
+      </div>
+    </section>
+
+    <!-- Today's Lab -->
+    <section class="slide-content">
+      <span class="week-badge">Week 2 — Lab</span>
+      <h2>Today's Lab</h2>
+      <p>Design a pretest and posttest for a T&amp;T research question.</p>
+      <div class="highlight">Your group will produce: independent &amp; dependent variables, control condition description, one threat to internal validity, one ethical concern.</div>
+      <div class="lab-link-box" style="margin-top:1.25em;">
+        <a href="../labs/week02.html">→ Week 2 Lab Page (full prompt)</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>Reveal.initialize({ hash:true, transition:'slide', slideNumber:'c/t', controls:true, progress:true, center:false, width:960, height:600 });</script>
+</body>
+</html>

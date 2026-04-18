@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 6 Slides — ENG 6812</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap">
+  <style>
+    :root { --primary:#478a7a; --accent:#2e6b5e; --body:'DM Sans',Tahoma,sans-serif; --handwriting:'Caveat',cursive; }
+    .reveal { font-family:var(--body); }
+    .reveal .slides section { text-align:left; }
+    .reveal h1,.reveal h2,.reveal h3 { color:var(--accent); font-family:var(--body); text-transform:none; letter-spacing:-0.01em; }
+    .reveal p,.reveal li { font-size:0.88em; }
+    .reveal ul li { margin-bottom:0.4em; }
+    .slide-title { background-color:var(--primary)!important; background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(135deg,#2e6b5e 0%,#478a7a 100%)!important; background-size:28px 28px,28px 28px,100% 100%!important; color:#f0faf7!important; }
+    .slide-title h1 { color:#f0faf7!important; font-size:1.5em!important; }
+    .slide-title h2 { color:#c8e8e2!important; }
+    .slide-title .script { font-family:var(--handwriting); font-size:1.3em; color:#e0f4f0; display:block; margin-top:0.5em; }
+    .slide-title .nav-links { margin-top:1.2em; display:flex; gap:1em; flex-wrap:wrap; }
+    .slide-title .nav-links a { color:#c8e8e2; font-size:0.7em; border:1px solid rgba(255,255,255,0.3); padding:0.25em 0.75em; border-radius:20px; text-decoration:none; }
+    .week-badge { display:inline-block; font-family:var(--handwriting); font-size:0.9em; color:var(--primary); background:#e6f4f0; padding:0.1em 0.6em; border-radius:20px; margin-bottom:0.5em; }
+    .highlight { background:#e6f4f0; border-left:3px solid var(--primary); padding:0.4em 0.75em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.4em 0; }
+    .story-prompt { background:linear-gradient(135deg,#e6f4f0 0%,#d4ede7 100%); border:1px solid #c8dbd7; border-radius:6px; padding:1em; text-align:center; }
+    .story-prompt .script { font-family:var(--handwriting); font-size:1.4em; color:var(--accent); }
+    .pres-prompt { background:#f8f5ee; border:1px solid #e0d8c0; border-radius:6px; padding:0.75em 1em; text-align:center; margin:0.5em 0; }
+    .lab-link-box { text-align:center; margin-top:1em; }
+    .lab-link-box a { background:var(--primary); color:white; padding:0.4em 1.2em; border-radius:4px; text-decoration:none; font-size:0.85em; }
+    .slide-content h2 { border-bottom:2px solid #c8dbd7; padding-bottom:0.3em; margin-bottom:0.5em; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1em; margin-top:0.5em; }
+    .col-box { background:#f0f7f5; border:1px solid #c8dbd7; border-radius:6px; padding:0.75em; }
+    .col-box h4 { color:var(--primary); font-family:var(--body); margin-bottom:0.3em; font-size:0.9em; }
+    .bad-q { background:#fff0f0; border-left:3px solid #c06060; padding:0.3em 0.7em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.25em 0; font-style:italic; }
+    .good-q { background:#f0fff4; border-left:3px solid #478a7a; padding:0.3em 0.7em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.25em 0; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <section class="slide-title">
+      <span class="week-badge" style="background:rgba(255,255,255,0.15);color:#f0faf7;">Week 6</span>
+      <h1>Survey Research and Statistics</h1>
+      <h2>ENG 6812 — Research Methods for Texts &amp; Technology</h2>
+      <span class="script">asking people things — carefully</span>
+      <div class="nav-links">
+        <a href="../index.html#week6">↖ Syllabus</a>
+        <a href="../labs/week06.html">⬡ Week 6 Lab</a>
+        <a href="index.html">All Slides</a>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="slide-content">
+      <span class="week-badge">Week 6 — Readings</span>
+      <h2>Tonight's Readings</h2>
+      <ul>
+        <li><strong>Vogt et al.</strong> (2012). When to use survey designs (pp. 25–44). [PDF in Webcourses]</li>
+        <li><strong>Vogt et al.</strong> (2014). Coding survey data (pp. 21–42). [PDF in Webcourses]</li>
+        <li><strong>Rouse &amp; Stanfill</strong> (2025). Quantifying fandom: Identity, romance, and platform preferences on AO3. <em>New Media and Society</em>, 1–20. [UCF library]</li>
+      </ul>
+    </section>
+
+    <!-- Why Surveys -->
+    <section class="slide-content">
+      <span class="week-badge">Week 6</span>
+      <h2>Why Use a Survey?</h2>
+      <ul>
+        <li>Fast, cheap, scalable — reach many participants</li>
+        <li>Captures <strong>self-reported opinions, attitudes, behaviors</strong></li>
+        <li>Standardized format allows comparison across respondents</li>
+        <li>Weakness: what people say ≠ what they do; self-report bias; construct validity</li>
+      </ul>
+      <div class="highlight">Key question: can the thing I want to know <em>actually</em> be measured by asking people directly?</div>
+    </section>
+
+    <!-- Question Types -->
+    <section class="slide-content">
+      <span class="week-badge">Week 6</span>
+      <h2>Survey Question Types</h2>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>Closed Questions</h4>
+          <ul>
+            <li>Likert scale items (agree–disagree, 1–5)</li>
+            <li>Multiple choice</li>
+            <li>Ranking</li>
+            <li>Semantic differential</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>Open Questions</h4>
+          <ul>
+            <li>Text box responses</li>
+            <li>Good for demographics and elaboration</li>
+            <li>Require coding to analyze</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bad Questions -->
+    <section class="slide-content">
+      <span class="week-badge">Week 6 — Common Mistakes</span>
+      <h2>Question Pitfalls</h2>
+      <div class="bad-q">Leading: "How great is this class?" — implies a correct answer</div>
+      <div class="bad-q">Double-barreled: "Is this course useful and enjoyable?" — two questions</div>
+      <div class="bad-q">Loaded: "When did you stop skipping class?" — assumes prior behavior</div>
+      <div class="bad-q">Vague: "Do you use technology?" — what counts as technology?</div>
+      <div class="bad-q">Double negative: "Is it impossible that the moon landing didn't happen?"</div>
+      <div class="highlight" style="margin-top:0.5em">Rule: if a first-year student could misread it, rewrite it.</div>
+    </section>
+
+    <!-- Rouse & Stanfill -->
+    <section class="slide-content">
+      <span class="week-badge">Week 6 — Exemplar</span>
+      <h2>Rouse &amp; Stanfill (2025): Quantifying Fandom</h2>
+      <ul>
+        <li>Survey-based study of AO3 users' identity, romance preferences, and platform habits</li>
+        <li>Demonstrates how survey methods can study fan communities and digital participation</li>
+        <li>Operationalizes "fandom" as a measurable construct</li>
+        <li>What can a survey tell us about AO3 that platform analysis can't? What can it <em>not</em> tell us?</li>
+      </ul>
+    </section>
+
+    <!-- Student Presentations -->
+    <section class="slide-content">
+      <div class="pres-prompt">
+        <span style="font-family:'Caveat',cursive;font-size:1.4em;color:#8b6914;">Student Presentation 1: Survey Research</span>
+        <p style="font-size:0.85em;color:#5a7068;margin-top:0.3em"><em>[Student presenter to lead — 20 min including Q&amp;A.]</em></p>
+      </div>
+      <div class="pres-prompt" style="margin-top:0.75em;background:#f5f0f8;border-color:#d0c8e0;">
+        <span style="font-family:'Caveat',cursive;font-size:1.4em;color:#6b3d8b;">Student Presentation 2: Statistics</span>
+        <p style="font-size:0.85em;color:#5a7068;margin-top:0.3em"><em>[Student presenter to lead — 20 min including Q&amp;A.]</em></p>
+      </div>
+    </section>
+
+    <!-- Dr. Johnson's Story -->
+    <section class="slide-content">
+      <div class="story-prompt">
+        <span class="script">Dr. Johnson's Story</span>
+        <p style="margin-top:0.75em;font-size:0.85em;color:#5a7068"><em>[This slide is for Dr. Johnson to complete.]</em></p>
+      </div>
+    </section>
+
+    <!-- Today's Lab -->
+    <section class="slide-content">
+      <span class="week-badge">Week 6 — Lab</span>
+      <h2>Today's Lab</h2>
+      <p><strong>Phase 1</strong> (15 min): Evaluate an excerpt from the Rouse &amp; Stanfill survey. Find leading questions, hidden constructs, what's unmeasurable.</p>
+      <p style="margin-top:0.5em"><strong>Phase 2</strong> (13 min): Draft 3 original survey questions on a tech topic. Swap and critique: measurable? Answerable honestly?</p>
+      <div class="lab-link-box" style="margin-top:1em;">
+        <a href="../labs/week06.html">→ Week 6 Lab Page (full prompt)</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>Reveal.initialize({ hash:true, transition:'slide', slideNumber:'c/t', controls:true, progress:true, center:false, width:960, height:600 });</script>
+</body>
+</html>

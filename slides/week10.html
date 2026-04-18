@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 10 Slides — ENG 6812</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap">
+  <style>
+    :root { --primary:#478a7a; --accent:#2e6b5e; --body:'DM Sans',Tahoma,sans-serif; --handwriting:'Caveat',cursive; }
+    .reveal { font-family:var(--body); }
+    .reveal .slides section { text-align:left; }
+    .reveal h1,.reveal h2,.reveal h3 { color:var(--accent); font-family:var(--body); text-transform:none; letter-spacing:-0.01em; }
+    .reveal p,.reveal li { font-size:0.88em; }
+    .reveal ul li { margin-bottom:0.4em; }
+    .slide-title { background-color:var(--primary)!important; background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(135deg,#2e6b5e 0%,#478a7a 100%)!important; background-size:28px 28px,28px 28px,100% 100%!important; color:#f0faf7!important; }
+    .slide-title h1 { color:#f0faf7!important; font-size:1.6em!important; }
+    .slide-title h2 { color:#c8e8e2!important; }
+    .slide-title .script { font-family:var(--handwriting); font-size:1.3em; color:#e0f4f0; display:block; margin-top:0.5em; }
+    .slide-title .nav-links { margin-top:1.2em; display:flex; gap:1em; flex-wrap:wrap; }
+    .slide-title .nav-links a { color:#c8e8e2; font-size:0.7em; border:1px solid rgba(255,255,255,0.3); padding:0.25em 0.75em; border-radius:20px; text-decoration:none; }
+    .week-badge { display:inline-block; font-family:var(--handwriting); font-size:0.9em; color:var(--primary); background:#e6f4f0; padding:0.1em 0.6em; border-radius:20px; margin-bottom:0.5em; }
+    .highlight { background:#e6f4f0; border-left:3px solid var(--primary); padding:0.4em 0.75em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.4em 0; }
+    .story-prompt { background:linear-gradient(135deg,#e6f4f0 0%,#d4ede7 100%); border:1px solid #c8dbd7; border-radius:6px; padding:1em; text-align:center; }
+    .story-prompt .script { font-family:var(--handwriting); font-size:1.4em; color:var(--accent); }
+    .pres-prompt { background:#f8f5ee; border:1px solid #e0d8c0; border-radius:6px; padding:0.75em 1em; text-align:center; margin:0.5em 0; }
+    .lab-link-box { text-align:center; margin-top:1em; }
+    .lab-link-box a { background:var(--primary); color:white; padding:0.4em 1.2em; border-radius:4px; text-decoration:none; font-size:0.85em; }
+    .slide-content h2 { border-bottom:2px solid #c8dbd7; padding-bottom:0.3em; margin-bottom:0.5em; }
+    .framework-item { background:#f0f7f5; border-left:3px solid var(--primary); padding:0.4em 0.75em; margin:0.3em 0; border-radius:0 4px 4px 0; font-size:0.85em; }
+    .framework-item strong { color:var(--accent); }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <section class="slide-title">
+      <span class="week-badge" style="background:rgba(255,255,255,0.15);color:#f0faf7;">Week 10</span>
+      <h1>Textual Analysis</h1>
+      <h2>ENG 6812 — Research Methods for Texts &amp; Technology</h2>
+      <span class="script">what does this text do in the world?</span>
+      <div class="nav-links">
+        <a href="../index.html#week10">↖ Syllabus</a>
+        <a href="../labs/week10.html">⬡ Week 10 Lab</a>
+        <a href="index.html">All Slides</a>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="slide-content">
+      <span class="week-badge">Week 10 — Readings</span>
+      <h2>Tonight's Readings</h2>
+      <ul>
+        <li><strong>Rose, G.</strong> (2023). Textual analysis. In <em>Visual methodologies</em> (5th ed., pp. 189–213). [UCF library]</li>
+        <li><strong>Burdick et al.</strong> (2012). Case studies. In <em>Digital_Humanities</em> (pp. 35–58). MIT Press. [open access]</li>
+        <li><strong>Jones, C.</strong> (2024). Search engine discourse analysis. <em>Information, Communication and Society, 27</em>(5), 1025–1042. [UCF library]</li>
+      </ul>
+    </section>
+
+    <!-- What is Textual Analysis -->
+    <section class="slide-content">
+      <span class="week-badge">Week 10</span>
+      <h2>What Is Textual Analysis?</h2>
+      <ul>
+        <li>Examining a text — its structure, content, form, and social function</li>
+        <li>"Text" is broad: written documents, images, interfaces, search results, datasets</li>
+        <li>Asks: What does this text mean? How does it produce that meaning? What does it do?</li>
+        <li>Not summary or content description — analytical interpretation grounded in theory</li>
+      </ul>
+      <div class="highlight">Textual analysis is close reading with a theoretical lens — and a claim about what is at stake.</div>
+    </section>
+
+    <!-- Rose's Framework -->
+    <section class="slide-content">
+      <span class="week-badge">Week 10 — Rose</span>
+      <h2>Rose's Framework for Textual Analysis</h2>
+      <div class="framework-item"><strong>Compositional analysis:</strong> how is the text structured? What is foregrounded and backgrounded?</div>
+      <div class="framework-item"><strong>Content:</strong> what is present? Crucially, what is absent?</div>
+      <div class="framework-item"><strong>Social relations:</strong> what relationship does the text construct with its reader? Who is the implied subject?</div>
+      <div class="framework-item"><strong>Social production:</strong> what work does this text do in the world? What does it enable, normalize, or exclude?</div>
+    </section>
+
+    <!-- DH Case Studies -->
+    <section class="slide-content">
+      <span class="week-badge">Week 10 — Burdick et al.</span>
+      <h2>Digital Humanities Case Studies</h2>
+      <ul>
+        <li>DH projects are themselves texts — they make arguments through design, data selection, visualization</li>
+        <li>What the DH case studies demonstrate: every interface embodies interpretive choices</li>
+        <li>Textual analysis applied to a DH project: what does this visualization argue? What data is excluded?</li>
+        <li>The medium is the method</li>
+      </ul>
+    </section>
+
+    <!-- Search Engine Discourse Analysis -->
+    <section class="slide-content">
+      <span class="week-badge">Week 10 — Jones</span>
+      <h2>Search Engine Discourse Analysis (Jones 2024)</h2>
+      <ul>
+        <li>Applies discourse analysis specifically to search result pages as texts</li>
+        <li>Search results construct a ranked, curated version of knowledge</li>
+        <li>What do the top results for a query naturalize? What worldview do they reproduce?</li>
+        <li>Extends Noble (Week 5): not just bias, but discourse — what knowledge regime does search enact?</li>
+      </ul>
+    </section>
+
+    <!-- Student Presentation -->
+    <section class="slide-content">
+      <div class="pres-prompt">
+        <span style="font-family:'Caveat',cursive;font-size:1.4em;color:#8b6914;">Student Presentation: Textual Analysis</span>
+        <p style="font-size:0.85em;color:#5a7068;margin-top:0.3em"><em>[Student presenter to lead this section.]</em></p>
+        <p style="font-size:0.8em;color:#5a7068">Come prepared with 2 written questions.</p>
+      </div>
+    </section>
+
+    <!-- Dr. Johnson's Story -->
+    <section class="slide-content">
+      <div class="story-prompt">
+        <span class="script">Dr. Johnson's Story</span>
+        <p style="margin-top:0.75em;font-size:0.85em;color:#5a7068"><em>[This slide is for Dr. Johnson to complete.]</em></p>
+      </div>
+    </section>
+
+    <!-- Today's Lab -->
+    <section class="slide-content">
+      <span class="week-badge">Week 10 — Lab</span>
+      <h2>Today's Lab</h2>
+      <p>All groups apply Rose's framework to a shared text (search results page, Wikipedia article, or DH project section). Final 8 minutes: write one paragraph of textual analysis in the register of a published article — not bullet points.</p>
+      <div class="lab-link-box" style="margin-top:1.25em;">
+        <a href="../labs/week10.html">→ Week 10 Lab Page (full prompt)</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>Reveal.initialize({ hash:true, transition:'slide', slideNumber:'c/t', controls:true, progress:true, center:false, width:960, height:600 });</script>
+</body>
+</html>

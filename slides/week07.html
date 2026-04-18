@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 7 Slides — ENG 6812</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap">
+  <style>
+    :root { --primary:#478a7a; --accent:#2e6b5e; --body:'DM Sans',Tahoma,sans-serif; --handwriting:'Caveat',cursive; }
+    .reveal { font-family:var(--body); }
+    .reveal .slides section { text-align:left; }
+    .reveal h1,.reveal h2,.reveal h3 { color:var(--accent); font-family:var(--body); text-transform:none; letter-spacing:-0.01em; }
+    .reveal p,.reveal li { font-size:0.88em; }
+    .reveal ul li { margin-bottom:0.4em; }
+    .slide-title { background-color:var(--primary)!important; background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(135deg,#2e6b5e 0%,#478a7a 100%)!important; background-size:28px 28px,28px 28px,100% 100%!important; color:#f0faf7!important; }
+    .slide-title h1 { color:#f0faf7!important; font-size:1.5em!important; }
+    .slide-title h2 { color:#c8e8e2!important; }
+    .slide-title .script { font-family:var(--handwriting); font-size:1.3em; color:#e0f4f0; display:block; margin-top:0.5em; }
+    .slide-title .nav-links { margin-top:1.2em; display:flex; gap:1em; flex-wrap:wrap; }
+    .slide-title .nav-links a { color:#c8e8e2; font-size:0.7em; border:1px solid rgba(255,255,255,0.3); padding:0.25em 0.75em; border-radius:20px; text-decoration:none; }
+    .week-badge { display:inline-block; font-family:var(--handwriting); font-size:0.9em; color:var(--primary); background:#e6f4f0; padding:0.1em 0.6em; border-radius:20px; margin-bottom:0.5em; }
+    .highlight { background:#e6f4f0; border-left:3px solid var(--primary); padding:0.4em 0.75em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.4em 0; }
+    .story-prompt { background:linear-gradient(135deg,#e6f4f0 0%,#d4ede7 100%); border:1px solid #c8dbd7; border-radius:6px; padding:1em; text-align:center; }
+    .story-prompt .script { font-family:var(--handwriting); font-size:1.4em; color:var(--accent); }
+    .pres-prompt { background:#f8f5ee; border:1px solid #e0d8c0; border-radius:6px; padding:0.75em 1em; text-align:center; margin:0.5em 0; }
+    .lab-link-box { text-align:center; margin-top:1em; }
+    .lab-link-box a { background:var(--primary); color:white; padding:0.4em 1.2em; border-radius:4px; text-decoration:none; font-size:0.85em; }
+    .slide-content h2 { border-bottom:2px solid #c8dbd7; padding-bottom:0.3em; margin-bottom:0.5em; }
+    .quote-box { background:#f8f5ee; border:1px solid #e0d4b0; border-radius:6px; padding:0.75em 1em; font-style:italic; font-size:0.82em; margin:0.5em 0; }
+    .quote-attrib { display:block; text-align:right; font-style:normal; font-size:0.9em; color:#5a7068; margin-top:0.3em; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <section class="slide-title">
+      <span class="week-badge" style="background:rgba(255,255,255,0.15);color:#f0faf7;">Week 7</span>
+      <h1>Interview Research and Observation</h1>
+      <h2>ENG 6812 — Research Methods for Texts &amp; Technology</h2>
+      <span class="script">just shut up — it's harder than it sounds</span>
+      <div class="nav-links">
+        <a href="../index.html#week7">↖ Syllabus</a>
+        <a href="../labs/week07.html">⬡ Week 7 Lab</a>
+        <a href="index.html">All Slides</a>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="slide-content">
+      <span class="week-badge">Week 7 — Readings</span>
+      <h2>Tonight's Readings</h2>
+      <ul>
+        <li><strong>Vogt et al.</strong> (2012). When to use interview designs (pp. 67–86). [PDF in Webcourses]</li>
+        <li><strong>Vogt et al.</strong> (2012). When to use observational designs (pp. 87–102). [PDF in Webcourses]</li>
+        <li><strong>Rose, G.</strong> (2023). Interviews. In <em>Visual methodologies</em> (5th ed., pp. 241–268). [UCF library]</li>
+      </ul>
+    </section>
+
+    <!-- Why Interview -->
+    <section class="slide-content">
+      <span class="week-badge">Week 7 — Interviews</span>
+      <h2>Why Interview?</h2>
+      <ul>
+        <li>Access to participants' <strong>interpretations, experiences, and meanings</strong></li>
+        <li>Flexible — can follow unexpected threads</li>
+        <li>Semi-structured: prepared questions + room to probe</li>
+        <li>What a survey can't capture: tone, hesitation, elaboration, contradiction</li>
+      </ul>
+      <div class="highlight">IRB must approve your interview questions — but you can still probe and follow up on anything the participant raises.</div>
+    </section>
+
+    <!-- Interview Best Practices -->
+    <section class="slide-content">
+      <span class="week-badge">Week 7</span>
+      <h2>Interview Best Practices (Lessons Learned)</h2>
+      <ul>
+        <li>As the interviewer: <strong>just shut up.</strong> Silence is productive.</li>
+        <li>Encourage rambling and elaboration — "tell me more about that"</li>
+        <li>Identify main questions vs. sub-questions you can skip if already answered</li>
+        <li>Don't be afraid of open questions: "Tell me about your experience with this"</li>
+        <li>Don't be afraid of follow-ups: "Why?" "What specifically?" "You mentioned X — can you say more?"</li>
+        <li>Verify and clarify: "So when you say X, you mean…?"</li>
+      </ul>
+    </section>
+
+    <!-- Interview Limitations -->
+    <section class="slide-content">
+      <span class="week-badge">Week 7</span>
+      <h2>Interview Limitations</h2>
+      <ul>
+        <li>Interviews are conducted with people <em>by</em> people — social desirability, power dynamics, perceived expectations</li>
+        <li>Difference (real or perceived) between interviewer and interviewee affects honesty</li>
+        <li>This is not a reason to discount interviews — it goes in your limitations section</li>
+      </ul>
+      <div class="quote-box">
+        "Interestingly, I noticed that during interviews most of the librarians lowered their voices when saying the words 'gay' or 'transgender'… This discomfort is not something that could have been conveyed through statistics in a quantitative survey."
+        <span class="quote-attrib">— Linda Garrison, T&amp;T dissertation</span>
+      </div>
+    </section>
+
+    <!-- Observational Design -->
+    <section class="slide-content">
+      <span class="week-badge">Week 7 — Observation</span>
+      <h2>Observational Design Types</h2>
+      <ul>
+        <li><strong>Non-participant observation</strong> — researcher watches without interacting</li>
+        <li><strong>Participant observation</strong> — researcher joins the group/activity</li>
+        <li><strong>Naturalistic</strong> — behavior in its natural context, no intervention</li>
+        <li><strong>Structured</strong> — pre-defined categories, systematic recording</li>
+        <li><strong>Action research</strong> — researcher is also an actor in the setting</li>
+      </ul>
+      <div class="highlight">Fieldnotes are the data — what you notice, how you describe it, what you leave out are all methodological choices.</div>
+    </section>
+
+    <!-- Student Presentations -->
+    <section class="slide-content">
+      <div class="pres-prompt">
+        <span style="font-family:'Caveat',cursive;font-size:1.4em;color:#8b6914;">Student Presentation 1: Interview Research</span>
+        <p style="font-size:0.85em;color:#5a7068;margin-top:0.3em"><em>[Student presenter to lead — 20 min including Q&amp;A.]</em></p>
+      </div>
+      <div class="pres-prompt" style="margin-top:0.75em;background:#f5f0f8;border-color:#d0c8e0;">
+        <span style="font-family:'Caveat',cursive;font-size:1.4em;color:#6b3d8b;">Student Presentation 2: Observation</span>
+        <p style="font-size:0.85em;color:#5a7068;margin-top:0.3em"><em>[Student presenter to lead — 20 min including Q&amp;A.]</em></p>
+      </div>
+    </section>
+
+    <!-- Dr. Johnson's Story -->
+    <section class="slide-content">
+      <div class="story-prompt">
+        <span class="script">Dr. Johnson's Story</span>
+        <p style="margin-top:0.75em;font-size:0.85em;color:#5a7068"><em>[This slide is for Dr. Johnson to complete.]</em></p>
+      </div>
+    </section>
+
+    <!-- Today's Lab -->
+    <section class="slide-content">
+      <span class="week-badge">Week 7 — Lab</span>
+      <h2>Today's Lab: Two Simultaneous Strands</h2>
+      <ul>
+        <li><strong>Interview strand:</strong> design a 5-question semi-structured guide, conduct a 7-minute pair interview</li>
+        <li><strong>Observation strand:</strong> write a fieldnote about the seminar room right now, then compare notes across groups</li>
+      </ul>
+      <div class="highlight">Debrief: what could the interview surface that a survey couldn't? What did the fieldnote writers leave out and why?</div>
+      <div class="lab-link-box" style="margin-top:1em;">
+        <a href="../labs/week07.html">→ Week 7 Lab Page (full prompt)</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>Reveal.initialize({ hash:true, transition:'slide', slideNumber:'c/t', controls:true, progress:true, center:false, width:960, height:600 });</script>
+</body>
+</html>

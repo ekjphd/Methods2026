@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 12 Slides — ENG 6812</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap">
+  <style>
+    :root { --primary:#478a7a; --accent:#2e6b5e; --body:'DM Sans',Tahoma,sans-serif; --handwriting:'Caveat',cursive; }
+    .reveal { font-family:var(--body); }
+    .reveal .slides section { text-align:left; }
+    .reveal h1,.reveal h2,.reveal h3 { color:var(--accent); font-family:var(--body); text-transform:none; letter-spacing:-0.01em; }
+    .reveal p,.reveal li { font-size:0.88em; }
+    .reveal ul li { margin-bottom:0.4em; }
+    .slide-title { background-color:var(--primary)!important; background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(135deg,#2e6b5e 0%,#478a7a 100%)!important; background-size:28px 28px,28px 28px,100% 100%!important; color:#f0faf7!important; }
+    .slide-title h1 { color:#f0faf7!important; font-size:1.4em!important; }
+    .slide-title h2 { color:#c8e8e2!important; }
+    .slide-title .script { font-family:var(--handwriting); font-size:1.3em; color:#e0f4f0; display:block; margin-top:0.5em; }
+    .slide-title .nav-links { margin-top:1.2em; display:flex; gap:1em; flex-wrap:wrap; }
+    .slide-title .nav-links a { color:#c8e8e2; font-size:0.7em; border:1px solid rgba(255,255,255,0.3); padding:0.25em 0.75em; border-radius:20px; text-decoration:none; }
+    .week-badge { display:inline-block; font-family:var(--handwriting); font-size:0.9em; color:var(--primary); background:#e6f4f0; padding:0.1em 0.6em; border-radius:20px; margin-bottom:0.5em; }
+    .highlight { background:#e6f4f0; border-left:3px solid var(--primary); padding:0.4em 0.75em; border-radius:0 4px 4px 0; font-size:0.85em; margin:0.4em 0; }
+    .story-prompt { background:linear-gradient(135deg,#e6f4f0 0%,#d4ede7 100%); border:1px solid #c8dbd7; border-radius:6px; padding:1em; text-align:center; }
+    .story-prompt .script { font-family:var(--handwriting); font-size:1.4em; color:var(--accent); }
+    .pres-prompt { background:#f8f5ee; border:1px solid #e0d8c0; border-radius:6px; padding:0.75em 1em; text-align:center; margin:0.5em 0; }
+    .lab-link-box { text-align:center; margin-top:1em; }
+    .lab-link-box a { background:var(--primary); color:white; padding:0.4em 1.2em; border-radius:4px; text-decoration:none; font-size:0.85em; }
+    .slide-content h2 { border-bottom:2px solid #c8dbd7; padding-bottom:0.3em; margin-bottom:0.5em; }
+    .tool-box { background:#f0f7f5; border:1px solid #c8dbd7; border-radius:6px; padding:0.6em 0.9em; margin:0.3em 0; font-size:0.85em; }
+    .tool-box strong { color:var(--accent); }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <section class="slide-title">
+      <span class="week-badge" style="background:rgba(255,255,255,0.15);color:#f0faf7;">Week 12</span>
+      <h1>Visual Methodologies and Projects as Data</h1>
+      <h2>ENG 6812 — Research Methods for Texts &amp; Technology</h2>
+      <span class="script">when the visualization is also the argument</span>
+      <div class="nav-links">
+        <a href="../index.html#week12">↖ Syllabus</a>
+        <a href="../labs/week12.html">⬡ Week 12 Lab</a>
+        <a href="index.html">All Slides</a>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="slide-content">
+      <span class="week-badge">Week 12 — Readings</span>
+      <h2>Tonight's Readings</h2>
+      <ul>
+        <li><strong>Rose, G.</strong> (2023). Visual analysis. In <em>Visual methodologies</em> (5th ed., pp. 145–188). [UCF library]</li>
+        <li><strong>Manovich, L.</strong> (2020). Cultural analytics. In <em>Cultural analytics</em> (pp. 211–256). [open access]</li>
+        <li><strong>Underwood, T.</strong> (2017). A genealogy of distant reading. <em>Digital Humanities Quarterly, 11</em>(2). [open access]</li>
+        <li><strong>Burdick et al.</strong> (2012). A portfolio of case studies. In <em>Digital_Humanities</em> (pp. 59–96). [open access]</li>
+      </ul>
+    </section>
+
+    <!-- Visual Methodologies -->
+    <section class="slide-content">
+      <span class="week-badge">Week 12 — Rose</span>
+      <h2>Visual Analysis (Rose 2023)</h2>
+      <ul>
+        <li>Three sites of meaning: production, image itself, audiencing</li>
+        <li>Three modalities: technological, compositional, social</li>
+        <li>Images are not transparent representations — they produce meaning through framing, cropping, color, sequence</li>
+        <li>Visual data requires different analytical tools than text — and different ethical considerations</li>
+      </ul>
+    </section>
+
+    <!-- Cultural Analytics -->
+    <section class="slide-content">
+      <span class="week-badge">Week 12 — Manovich</span>
+      <h2>Cultural Analytics (Manovich 2020)</h2>
+      <ul>
+        <li>Using computational tools to analyze large cultural datasets — millions of images, texts, or artworks</li>
+        <li>Patterns invisible at human scale become visible at computational scale</li>
+        <li>The visualization is itself a form of argument — design choices are interpretive choices</li>
+        <li>Challenge: does scale produce insight, or just impressive images?</li>
+      </ul>
+    </section>
+
+    <!-- Distant Reading -->
+    <section class="slide-content">
+      <span class="week-badge">Week 12 — Underwood</span>
+      <h2>A Genealogy of Distant Reading (Underwood 2017)</h2>
+      <ul>
+        <li>Traces the intellectual history of computational approaches to text analysis in literary studies</li>
+        <li>Distant reading: sacrificing depth for breadth — what patterns emerge across thousands of texts?</li>
+        <li>Underwood: distant reading makes claims differently than close reading — what does it mean to "find" a pattern in data?</li>
+        <li>Critical lens: which texts got digitized and are therefore in the dataset?</li>
+      </ul>
+    </section>
+
+    <!-- Tools: TAGS, Voyant, AntConc, NVivo -->
+    <section class="slide-content">
+      <span class="week-badge">Week 12 — Tools</span>
+      <h2>Tools for Projects as Data</h2>
+      <div class="tool-box"><strong>TAGS</strong> — Twitter Archiving Google Sheet; harvest tweet data by hashtag, keyword, or account</div>
+      <div class="tool-box"><strong>Voyant Tools</strong> — browser-based text analysis: frequency, co-occurrence, trends across a corpus</div>
+      <div class="tool-box"><strong>AntConc</strong> — concordance and corpus analysis tool; excellent for close patterns in large text sets</div>
+      <div class="tool-box"><strong>NVivo</strong> — qualitative data analysis software; coding, query, and visualization</div>
+      <p style="font-size:0.78em;color:#5a7068;margin-top:0.4em">Access NVivo through UCF's Citrix virtual desktop environment.</p>
+    </section>
+
+    <!-- Student Presentations -->
+    <section class="slide-content">
+      <div class="pres-prompt">
+        <span style="font-family:'Caveat',cursive;font-size:1.4em;color:#8b6914;">Student Presentation 1: Visual Methodologies</span>
+        <p style="font-size:0.85em;color:#5a7068;margin-top:0.3em"><em>[Student presenter to lead — 20 min including Q&amp;A.]</em></p>
+      </div>
+      <div class="pres-prompt" style="margin-top:0.75em;background:#f5f0f8;border-color:#d0c8e0;">
+        <span style="font-family:'Caveat',cursive;font-size:1.4em;color:#6b3d8b;">Student Presentation 2: Projects as Data</span>
+        <p style="font-size:0.85em;color:#5a7068;margin-top:0.3em"><em>[Student presenter to lead — 20 min including Q&amp;A.]</em></p>
+      </div>
+    </section>
+
+    <!-- Dr. Johnson's Story -->
+    <section class="slide-content">
+      <div class="story-prompt">
+        <span class="script">Dr. Johnson's Story</span>
+        <p style="margin-top:0.75em;font-size:0.85em;color:#5a7068"><em>[This slide is for Dr. Johnson to complete.]</em></p>
+      </div>
+    </section>
+
+    <!-- Today's Lab -->
+    <section class="slide-content">
+      <span class="week-badge">Week 12 — Lab</span>
+      <h2>Today's Lab: Two Simultaneous Strands</h2>
+      <ul>
+        <li><strong>Visual analysis strand:</strong> compositional, social, and technological analysis of a set of 8–10 images</li>
+        <li><strong>Projects-as-data strand:</strong> treat a DH project as object of analysis (Viral Texts, Photogrammar, or Colored Conventions Project)</li>
+      </ul>
+      <div class="highlight">Debrief: where do the two strands' methods overlap, and where do they require completely different skills?</div>
+      <div class="lab-link-box" style="margin-top:1em;">
+        <a href="../labs/week12.html">→ Week 12 Lab Page (full prompt)</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>Reveal.initialize({ hash:true, transition:'slide', slideNumber:'c/t', controls:true, progress:true, center:false, width:960, height:600 });</script>
+</body>
+</html>

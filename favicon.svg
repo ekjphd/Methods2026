@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Lab flask / Erlenmeyer flask in teal-green -->
+  <rect width="32" height="32" rx="6" fill="#478a7a"/>
+  <!-- Flask body -->
+  <path d="M12 6 h8 v8 l5 10 H7 l5-10 z" fill="none" stroke="#f0faf7" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Flask neck top bar -->
+  <line x1="11" y1="6" x2="21" y2="6" stroke="#f0faf7" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Liquid in flask -->
+  <path d="M9 22 l2-4 h10 l2 4 z" fill="rgba(240,250,247,0.5)"/>
+  <!-- Bubbles -->
+  <circle cx="14" cy="19" r="1" fill="#f0faf7" opacity="0.8"/>
+  <circle cx="18" cy="17" r="0.8" fill="#f0faf7" opacity="0.6"/>
+</svg>
