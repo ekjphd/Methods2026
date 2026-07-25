@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random research topics — ENG 6812</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:#478a7a; --accent:#2e6b5e; --bg:#fafaf7; --surface:#ffffff;
+    --text:#1e2d2a; --text-muted:#5a7068; --border:#c8dbd7;
+    --grid-color:rgba(71,138,122,0.12);
+    --handwriting:'Caveat',cursive;
+    --body-font:Tahoma,'DM Sans',system-ui,sans-serif;
+    --radius:6px; --shadow:0 2px 8px rgba(46,107,94,0.12);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--body-font); font-size:16px; line-height:1.6;
+    color:var(--text); background-color:var(--bg);
+    background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);
+    background-size:28px 28px; background-attachment:fixed;
+    min-height:100vh;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 1.25rem;}
+  .hero{
+    background-color:var(--primary);
+    background-image:linear-gradient(rgba(255,255,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.06) 1px,transparent 1px),linear-gradient(135deg,var(--accent) 0%,var(--primary) 60%);
+    background-size:28px 28px,28px 28px,100% 100%;
+    padding:2.75rem 1.25rem 2.25rem; text-align:center;
+  }
+  .hero .kicker{font-family:var(--handwriting);font-size:1.1rem;color:#b8ddd7;display:block;letter-spacing:.04em;margin-bottom:.3rem;}
+  .hero h1{color:#f0faf7;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:600;line-height:1.2;}
+  .hero .tagline{font-family:var(--handwriting);font-size:clamp(1.15rem,3vw,1.45rem);color:#f0faf7;display:inline-block;max-width:520px;line-height:1.35;border-top:1px solid rgba(255,255,255,.3);padding-top:.7rem;margin-top:.7rem;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem 2rem;margin:1.5rem 0;box-shadow:var(--shadow);}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:1rem;justify-content:center;}
+  .count-field{display:flex;align-items:center;gap:.5rem;font-size:.95rem;color:var(--text-muted);}
+  .count-field label{font-family:var(--handwriting);font-size:1.1rem;color:var(--primary);}
+  .count-field input{
+    width:3.5rem;font-family:var(--body-font);font-size:1.05rem;text-align:center;
+    padding:.35rem .4rem;border:1px solid var(--border);border-radius:var(--radius);color:var(--text);background:#f5f8f7;
+  }
+  button.pull{
+    font-family:var(--body-font);font-size:1.05rem;font-weight:600;cursor:pointer;
+    color:#f0faf7;background:var(--primary);border:none;border-radius:24px;
+    padding:.7rem 1.6rem;box-shadow:var(--shadow);transition:background .15s,transform .05s;
+  }
+  button.pull:hover{background:var(--accent);}
+  button.pull:active{transform:translateY(1px);}
+  button.pull:disabled{background:#a9c4bd;cursor:default;}
+  .status{text-align:center;color:var(--text-muted);font-size:.9rem;margin-top:1rem;}
+  .status .reload{background:none;border:none;color:var(--accent);font-size:.9rem;cursor:pointer;text-decoration:underline;padding:0;font-family:var(--body-font);}
+  .status .reload:hover{color:var(--primary);}
+  .results{margin-top:1.5rem;display:grid;gap:.85rem;}
+  .topic{
+    background:#eef6f4;border:1px solid var(--border);border-left:4px solid var(--primary);
+    border-radius:0 var(--radius) var(--radius) 0;padding:1rem 1.25rem;
+    font-size:1.15rem;color:var(--text);animation:pop .25s ease;
+  }
+  .topic .n{font-family:var(--handwriting);color:var(--primary);font-size:1.3rem;margin-right:.6rem;}
+  @keyframes pop{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .empty{text-align:center;color:var(--text-muted);font-style:italic;padding:1rem;}
+  .foot{text-align:center;color:var(--text-muted);font-size:.8rem;padding:1.5rem 1.25rem 2.5rem;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="kicker">ENG 6812</span>
+  <h1>Random research topics</h1>
+  <span class="tagline">let&rsquo;s see what the method can do with a topic or two</span>
+</header>
+
+<main class="wrap">
+  <div class="card">
+    <div class="controls">
+      <div class="count-field">
+        <label for="count">pull</label>
+        <input id="count" type="number" min="1" max="12" value="3">
+        <span>topic(s)</span>
+      </div>
+      <button class="pull" id="pullBtn" disabled>Loading responses&hellip;</button>
+    </div>
+    <div class="results" id="results"></div>
+    <p class="status" id="status">Fetching the class survey&hellip;</p>
+  </div>
+</main>
+
+<p class="foot">Topics are pulled live from the Week 1 in-class survey.</p>
+
+<script>
+  var SHEET_ID = '1vWg_KNwo4UCF2dIeGn8OS5SufGBdykfVRuN6A4eKAVE';
+  function csvUrl(){ return 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&_=' + Date.now(); }
+
+  var pool = [];
+  var responses = 0;
+  var btn = document.getElementById('pullBtn');
+  var statusEl = document.getElementById('status');
+  var resultsEl = document.getElementById('results');
+  var countEl = document.getElementById('count');
+
+  // Quote-aware CSV parser -> array of rows (each an array of fields)
+  function parseCSV(text){
+    var rows = [], field = '', row = [], inQ = false;
+    for (var i = 0; i < text.length; i++){
+      var c = text[i];
+      if (inQ){
+        if (c === '"'){
+          if (text[i+1] === '"'){ field += '"'; i++; }
+          else { inQ = false; }
+        } else { field += c; }
+      } else {
+        if (c === '"'){ inQ = true; }
+        else if (c === ','){ row.push(field); field = ''; }
+        else if (c === '\n'){ row.push(field); rows.push(row); row = []; field = ''; }
+        else if (c === '\r'){ /* ignore */ }
+        else { field += c; }
+      }
+    }
+    if (field.length || row.length){ row.push(field); rows.push(row); }
+    return rows;
+  }
+
+  function buildPool(text){
+    var rows = parseCSV(text);
+    var seen = {}, out = [], resp = 0;
+    for (var r = 1; r < rows.length; r++){        // skip header row
+      var cells = rows[r].slice(1);               // drop the Timestamp column
+      var joined = cells.join(';');
+      if (joined.trim()) resp++;
+      var parts = joined.split(';');
+      for (var p = 0; p < parts.length; p++){
+        var s = parts[p].trim();
+        var key = s.toLowerCase();
+        if (s && !seen[key]){ seen[key] = 1; out.push(s); }
+      }
+    }
+    pool = out; responses = resp;
+  }
+
+  function setStatus(msg, withReload){
+    statusEl.innerHTML = '';
+    statusEl.appendChild(document.createTextNode(msg));
+    if (withReload){
+      statusEl.appendChild(document.createTextNode('  '));
+      var b = document.createElement('button');
+      b.className = 'reload'; b.textContent = 'reload responses';
+      b.onclick = load;
+      statusEl.appendChild(b);
+    }
+  }
+
+  function load(){
+    btn.disabled = true; btn.textContent = 'Loading responses…';
+    setStatus('Fetching the class survey…', false);
+    fetch(csvUrl())
+      .then(function(res){ if(!res.ok) throw new Error('HTTP ' + res.status); return res.text(); })
+      .then(function(text){
+        buildPool(text);
+        btn.textContent = 'Pull random topics';
+        if (pool.length === 0){
+          btn.disabled = true;
+          resultsEl.innerHTML = '<div class="empty">No responses yet. Once students fill in the Week 1 survey, their topics will appear here.</div>';
+          setStatus('0 topics collected so far.', true);
+        } else {
+          btn.disabled = false;
+          resultsEl.innerHTML = '';
+          setStatus(pool.length + ' topics from ' + responses + ' response' + (responses === 1 ? '' : 's') + '.', true);
+        }
+      })
+      .catch(function(err){
+        btn.disabled = true; btn.textContent = 'Pull random topics';
+        setStatus('Could not load the survey (' + err.message + '). Check that the sheet is shared as "anyone with the link can view," then reload.', true);
+      });
+  }
+
+  function shuffle(a){
+    for (var i = a.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function pull(){
+    if (pool.length === 0) return;
+    var n = parseInt(countEl.value, 10);
+    if (isNaN(n) || n < 1) n = 1;
+    var picks = shuffle(pool.slice()).slice(0, Math.min(n, pool.length));
+    resultsEl.innerHTML = '';
+    picks.forEach(function(topic, idx){
+      var d = document.createElement('div');
+      d.className = 'topic';
+      var span = document.createElement('span');
+      span.className = 'n'; span.textContent = (idx + 1) + '.';
+      d.appendChild(span);
+      d.appendChild(document.createTextNode(topic));
+      resultsEl.appendChild(d);
+    });
+    if (picks.length < n){
+      setStatus('Only ' + pool.length + ' topic' + (pool.length === 1 ? '' : 's') + ' available so far.', true);
+    }
+  }
+
+  btn.addEventListener('click', pull);
+  load();
+</script>
+
+</body>
+</html>
