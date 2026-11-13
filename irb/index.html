@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IRB Land</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lilita+One&family=Special+Elite&display=swap">
+<style>
+/* Layout: one 1600x900 stage scaled to any landscape screen. The lighted IRB Land sign hangs at the top of every screen; the board is tilted so the gingerbread pawns stand up, and the camera follows each move. */
+:root{
+  --kraft:#e8ddc8; --paper:#fcf8ee; --ink:#2a1c12; --ink-soft:#5b4636; --rust:#b5452e; --tape:#e9a6b8;
+  --red:#d63a3a; --orange:#ec8a22; --yellow:#f2c12c; --green:#3c9a47; --blue:#2c76c6; --purple:#8a4dbd;
+  --good:#256b2b; --bad:#a8231c;
+  --f-display:'Lilita One','Arial Rounded MT Bold','Trebuchet MS',sans-serif;
+  --f-type:'Special Elite','Courier New',monospace;
+  --f-body:'Atkinson Hyperlegible',Verdana,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;overflow:hidden}
+#frame{position:fixed;inset:0;overflow:hidden}
+body{background:#4a3527;color:var(--ink);font-family:var(--f-body);font-size:18px}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,.deck:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center center;overflow:hidden;background:var(--kraft);
+  background-image:radial-gradient(rgba(120,90,50,.08) 1px,transparent 1.5px),radial-gradient(rgba(255,255,255,.28) 1px,transparent 1.5px);
+  background-size:7px 7px,11px 11px;background-position:0 0,3px 5px}
+
+/* Hanging sign */
+#sign{position:absolute;left:50%;top:0;width:380px;margin-left:-190px;z-index:40;pointer-events:none;transform-origin:50% 0;animation:sway 6s ease-in-out infinite}
+#sign img{display:block;width:380px;margin-top:22px;filter:drop-shadow(0 10px 12px rgba(40,20,10,.45))}
+#sign::before,#sign::after{content:"";position:absolute;top:0;width:6px;height:44px;background:repeating-linear-gradient(#c9a44c 0 6px,#8a6a24 6px 9px);border-radius:3px}
+#sign::before{left:96px}#sign::after{right:96px}
+@keyframes sway{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg)}}
+
+.tab{position:absolute;left:18px;top:16px;background:var(--rust);color:#fff7ee;font-family:var(--f-type);font-size:17px;padding:8px 14px;border-radius:6px;z-index:5}
+.tools{position:absolute;right:18px;top:14px;display:flex;gap:8px;z-index:5}
+.tool{background:var(--paper);border:2px dashed var(--ink-soft);color:var(--ink);font-family:var(--f-type);font-size:15px;padding:6px 10px;border-radius:4px}
+.tool[aria-pressed="false"]{opacity:.7}
+
+/* Tilted board with a following camera */
+#view{position:absolute;left:16px;top:120px;width:990px;height:766px;border-radius:18px;overflow:hidden;perspective:1700px;perspective-origin:50% 40%;
+  background:#8a5a32 url(assets/table.jpg) 50% 0/1024px 768px repeat;background-image:url(assets/table.jpg),
+   radial-gradient(ellipse at 50% 45%,rgba(30,15,5,0) 40%,rgba(30,15,5,.35) 100%);background-size:1024px 768px,100% 100%;background-repeat:repeat,no-repeat;background-blend-mode:normal;
+  box-shadow:0 8px 18px rgba(60,40,20,.3),0 0 0 6px #fcf8ee}
+.boardbase{position:absolute;left:-46px;top:-46px;width:1292px;height:1292px;border-radius:22px;
+  background:repeating-linear-gradient(45deg,#d3212c 0 22px,#fff7f0 22px 44px);box-shadow:0 0 0 6px #8b1219,0 40px 70px rgba(30,15,5,.55)}
+.boardbase::after{content:"";position:absolute;inset:30px;border-radius:10px;background:#fcf8ee;box-shadow:inset 0 0 0 4px #8b1219}
+.boardedge{position:absolute;left:-46px;top:1246px;width:1292px;height:40px;transform-origin:50% 0;transform:rotateX(-90deg);
+  background:linear-gradient(#8b1219,#5e0c11);border-radius:0 0 10px 10px}
+#plane{position:absolute;left:0;top:0;width:1200px;height:1200px;transform-origin:0 0;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.3,.7,.2,1)}
+#plane>img{position:absolute;left:-46px;top:-46px;width:1292px;height:1292px;display:block;border-radius:22px}
+#board{position:absolute;left:0;top:0;width:1200px;height:1200px}
+#sprites{position:absolute;inset:0;transform-style:preserve-3d}
+.pawn{position:absolute;width:0;height:0;transform-style:preserve-3d}
+.pawn .shadow{position:absolute;left:-24px;top:-9px;width:48px;height:18px;border-radius:50%;background:rgba(0,0,0,.35);filter:blur(3px)}
+.pawn .fig{position:absolute;left:-34px;bottom:0;width:68px;transform-origin:50% 100%;transform:rotateX(-18deg) translateY(var(--hop,0px));filter:drop-shadow(0 0 3px #fff) drop-shadow(0 4px 3px rgba(0,0,0,.35))}
+.pawn .fig svg{display:block;width:68px;height:auto}
+.pawn.mover .fig{filter:drop-shadow(0 0 4px #fff7c2) drop-shadow(0 0 10px #ffd34d) drop-shadow(0 4px 3px rgba(0,0,0,.35))}
+
+/* Side panels */
+#side{position:absolute;left:1022px;top:150px;width:562px;height:736px;display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--paper);padding:14px 18px;box-shadow:0 6px 14px rgba(60,40,20,.18);position:relative}
+.torn{clip-path:polygon(0 3%,4% 0,9% 2%,15% 0,22% 2%,30% 0,38% 1.5%,46% 0,55% 2%,63% 0,71% 1.5%,80% 0,88% 2%,95% 0,100% 3%,99% 12%,100% 24%,98.5% 37%,100% 50%,99% 63%,100% 76%,98.5% 88%,100% 97%,95% 100%,87% 98.5%,79% 100%,70% 98%,61% 100%,52% 98.5%,43% 100%,34% 98%,25% 100%,16% 98.5%,8% 100%,0 97%,1% 86%,0 74%,1.5% 62%,0 50%,1% 38%,0 26%,1.5% 14%)}
+.tape{position:absolute;width:96px;height:26px;background:repeating-linear-gradient(-45deg,rgba(255,255,255,.45) 0 7px,transparent 7px 14px),var(--tape);opacity:.9;transform:rotate(-8deg);top:-8px;left:16px;z-index:2}
+.play{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.turn{display:flex;gap:12px;align-items:center}
+.turn .who{font-family:var(--f-display);font-size:38px;line-height:1}
+.turn .form{font-family:var(--f-type);font-size:15px;color:var(--ink-soft)}
+.hint{font-family:var(--f-type);font-size:17px;color:var(--ink);margin:10px 0 0;min-height:22px}
+.deckzone{display:flex;gap:12px;align-items:center}
+.deck{width:110px;height:150px;position:relative;border:none;background:none;padding:0}
+.deck .back{position:absolute;inset:0;border-radius:10px;background:url("assets/card-back.png") center/100% 100% no-repeat;box-shadow:0 3px 0 #c9b79a,0 6px 0 #b9a687,0 8px 12px rgba(0,0,0,.2);display:grid;place-items:center}
+.deck .back span{font-family:var(--f-display);color:#b3121c;font-size:16px;line-height:1;white-space:nowrap}
+.deck.ready .back{animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px) rotate(-2deg)}}
+.flip{width:110px;height:150px;perspective:800px}
+.flip .inner{width:100%;height:100%;position:relative;transition:transform .7s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+.flip.show .inner{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 6px 12px rgba(0,0,0,.2)}
+.flip .f-back{background:url("assets/card-back.png") center/100% 100% no-repeat}
+.flip .f-front{background:var(--paper);border:3px solid var(--ink);transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px}
+.swatch{width:78px;border-radius:8px;border:3px solid rgba(0,0,0,.35)}
+.cardname{font-family:var(--f-type);font-size:14px;text-align:center;line-height:1.15}
+.teams{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;height:100%}
+.trow{display:grid;grid-template-columns:74px 1fr;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;border:3px solid transparent}
+.trow.active{background:#fff1c9;border:3px dashed var(--orange)}
+.trow b{font-family:var(--f-display);font-weight:400;font-size:30px;display:block;line-height:1}
+.trow small{display:block;font-family:var(--f-type);font-size:15px;color:var(--ink-soft);margin-top:4px}
+.trow .q{font-family:var(--f-type);font-size:17px;font-variant-numeric:tabular-nums;margin-top:4px}
+
+/* Overlays */
+.overlay{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center}
+.dim{background:rgba(42,28,18,.5);align-items:flex-start;padding-top:216px}
+.qcard{background:var(--paper);width:1480px;max-height:672px;padding:30px 36px 26px;position:relative;display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:24px;overflow:auto}
+.qlabel{font-family:var(--f-type);font-size:18px;color:#fff;display:inline-block;padding:5px 12px;border-radius:4px;margin-bottom:10px}
+.scenario{font-size:31px;line-height:1.25;font-weight:700;margin:0 0 12px;text-wrap:balance}
+.prompt{font-size:24px;margin:0 0 10px}
+.formbox{border:2px solid #3a3a3a;background:#fff}
+.formbox .fhead{background:#d9d9d9;border-bottom:2px solid #3a3a3a;padding:6px 12px;font-family:Calibri,Carlito,Arial,sans-serif;font-weight:700;font-size:21px}
+.formbox .fhead span{font-weight:400;font-size:17px}
+.opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #ddd;padding:7px 12px;font-family:Calibri,Carlito,Arial,sans-serif;font-size:22px;line-height:1.2;color:#111}
+.opt:last-child{border-bottom:none}
+.opt .box{flex:0 0 26px;height:26px;border:2.5px solid #222;display:grid;place-items:center;font-weight:700;background:#fff}
+.opt.on .box::after{content:"X";font-size:20px;line-height:1}
+.opt:hover{background:#fff8de}
+.choices{display:grid;gap:10px}
+.choice{background:#fff;border:3px solid var(--ink);border-radius:10px;padding:11px 16px;text-align:left;font-size:23px;line-height:1.2;color:var(--ink)}
+.choice.on{background:#fff1c9;border-color:var(--orange);box-shadow:0 0 0 3px var(--orange)}
+.right{background:#dcefd9!important;border-color:var(--good)!important}
+.opt.right,.opt.wrongpick{border-left:8px solid var(--good)}
+.wrongpick{background:#f8dcd8!important;border-color:var(--bad)!important}
+.opt.wrongpick{border-left-color:var(--bad)}
+.missed{outline:3px dashed var(--good);outline-offset:-3px}
+.actions{display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.big{font-family:var(--f-display);font-size:28px;padding:10px 28px;border-radius:12px;border:3px solid var(--ink);background:var(--yellow);color:var(--ink);box-shadow:0 4px 0 var(--ink)}
+.big:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.big.alt{background:var(--paper)}
+.result{border-radius:10px;padding:12px 16px;font-size:22px;line-height:1.3;margin-top:12px}
+.result.good{background:#dcefd9;border:3px solid var(--good)}
+.result.bad{background:#f8dcd8;border:3px solid var(--bad)}
+.result strong{font-family:var(--f-display);font-weight:400;font-size:30px;display:block;margin-bottom:4px}
+.note{font-family:var(--f-type);font-size:15px;color:var(--ink-soft)}
+
+.gumball{position:relative;width:230px;height:440px;align-self:start}
+.gumball .machine{position:absolute;left:28px;top:0;width:174px;height:auto}
+.globe{position:absolute;left:41px;top:27px;width:145px;height:115px;border-radius:50%;overflow:hidden;
+  background:radial-gradient(ellipse at 34% 26%,rgba(255,255,255,.98) 0 12%,rgba(236,244,248,.97) 40%,rgba(205,222,232,.97) 100%)}
+.globe::after{content:"";position:absolute;left:18px;top:12px;width:44px;height:22px;border-radius:50%;border-top:5px solid rgba(255,255,255,.9);transform:rotate(-24deg)}
+.gb{position:absolute;width:19px;height:19px;margin:-9.5px 0 0 -9.5px;border-radius:50%;box-shadow:inset -3px -3px 0 rgba(0,0,0,.16),inset 2px 2px 0 rgba(255,255,255,.45);transition:transform .45s ease-in,opacity .45s}
+.gb.gone{transform:translateY(60px) scale(.4);opacity:0}
+.gball{position:absolute;left:115px;width:70px;height:70px;margin-left:-35px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--f-display);font-size:32px;color:#fff;border:3px solid rgba(0,0,0,.3);box-shadow:inset -8px -8px 0 rgba(0,0,0,.14),inset 6px 6px 0 rgba(255,255,255,.35);
+  animation:drop .55s cubic-bezier(.4,1.6,.6,1) forwards}
+.gball.dark{color:var(--ink)}
+.gball.old{width:30px;height:30px;margin-left:-15px;font-size:14px;animation:none;opacity:.85}
+@keyframes drop{from{top:205px;transform:scale(.5)}to{top:300px;transform:scale(1)}}
+.timesup{position:absolute;left:0;right:0;top:384px;text-align:center;font-family:var(--f-display);font-size:34px;color:var(--bad);opacity:0}
+.timesup.show{opacity:1;animation:pop .5s ease}
+@keyframes pop{from{transform:scale(.4)}to{transform:scale(1)}}
+
+#startOv{background:#f4d9c6 url("assets/candy-shop.jpg") center/cover no-repeat;z-index:50}
+.rulecard{position:absolute;left:150px;right:150px;bottom:20px;height:350px;background:var(--paper);padding:26px 34px 22px;display:grid;grid-template-columns:1.25fr 1fr;gap:28px}
+.rulecard h2{font-family:var(--f-display);font-weight:400;font-size:32px;margin:0 0 6px}
+.rules{font-size:20px;line-height:1.35;margin:0;padding-left:24px}
+.rules li{margin-bottom:6px}
+.lineup{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;font-family:var(--f-type);font-size:13px;line-height:1.2}
+.lineup b{display:block;font-family:var(--f-display);font-weight:400;font-size:21px;margin-top:2px}
+
+#winOv{background:#20304a url("assets/irb-forest.jpg") center/cover no-repeat}
+.wincard{position:absolute;left:60px;right:60px;bottom:18px;height:180px;background:var(--paper);padding:16px 28px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center}
+.wincard h2{font-family:var(--f-display);font-weight:400;font-size:38px;margin:0}
+.wincard p{margin:4px 0 0;font-size:22px;line-height:1.3}
+
+#rotate{position:fixed;inset:0;z-index:99;background:#fcf8ee;display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;text-align:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));font-family:var(--f-display);font-size:30px;color:var(--ink)}
+#rotate .phone{width:70px;height:120px;border:6px solid var(--ink);border-radius:14px;animation:turn 2s ease-in-out infinite}
+@keyframes turn{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(90deg)}}
+/* portrait phones: the stage is turned sideways in fit() instead of blocking play */
+@media (prefers-reduced-motion:reduce){
+  #sign,.deck.ready .back,.gball,.timesup.show,#rotate .phone{animation:none}
+  .gball{top:300px}
+  .flip .inner,#plane{transition:none}
+}
+/* revised side panel */
+.turnpanel{height:268px;display:flex;align-items:center;padding:14px 22px}
+.turn{display:flex;gap:18px;align-items:center;width:100%}
+.turn .pop{flex:0 0 auto;transform-origin:50% 100%;animation:pop .9s cubic-bezier(.2,.9,.3,1.3) both}
+.turn .pop svg{display:block}
+.turn .who{font-family:var(--f-display);font-size:64px;line-height:1;animation:slidein .6s .15s ease-out both}
+.turn .form{font-family:var(--f-type);font-size:20px;color:var(--ink-soft);line-height:1.25}
+.turn .yt{font-family:var(--f-type);font-size:22px;color:var(--red);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+@keyframes pop{0%{transform:translateY(90px) scale(.2);opacity:0}55%{transform:translateY(-14px) scale(1.12);opacity:1}75%{transform:translateY(4px) scale(.96)}100%{transform:none}}
+@keyframes slidein{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+.deckpanel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 18px 14px}
+.deckzone{display:flex;gap:30px;align-items:center;justify-content:center}
+.deck,.flip{width:224px;height:324px}
+.deck .back{border-radius:16px}
+.deck .back span{font-size:30px}
+.flip .face{border-radius:16px}
+.flip .f-front{gap:14px;padding:16px;border-width:4px}
+.flip .f-front .swatch{width:168px;border-radius:12px}
+.flip .f-front img{width:176px!important;height:182px!important}
+.cardname{font-size:24px;line-height:1.2}
+.deckpanel .hint{font-size:22px;text-align:center;margin:18px 0 0;min-height:30px}
+.turn .move{transform-origin:50% 100%;animation-delay:.9s;animation-iteration-count:infinite}
+.m-exempt{animation:skate 2.4s ease-in-out infinite}
+@keyframes skate{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(22px) rotate(-7deg)}50%{transform:translateX(0) rotate(0)}75%{transform:translateX(-22px) rotate(7deg)}}
+.m-expedited{animation:wave 2.2s ease-in-out infinite}
+@keyframes wave{0%,55%,100%{transform:rotate(0)}10%{transform:rotate(-12deg)}20%{transform:rotate(10deg)}30%{transform:rotate(-12deg)}40%{transform:rotate(10deg)}50%{transform:rotate(-3deg)}}
+.m-nhsr{animation:robot 1.8s steps(1,end) infinite}
+@keyframes robot{0%{transform:none}12.5%{transform:translateY(-8px)}25%{transform:translateY(-8px) rotate(8deg)}37.5%{transform:translateY(-8px) rotate(-8deg)}50%{transform:translateY(-8px)}62.5%{transform:none}75%{transform:translateX(6px)}87.5%{transform:translateX(-6px)}100%{transform:none}}
+.m-full{animation:tired 3.6s ease-in-out infinite}
+@keyframes tired{0%,100%{transform:none}30%{transform:translateY(6px) scaleY(.93) rotate(-5deg)}45%{transform:translateY(8px) scaleY(.91) rotate(-6deg)}60%{transform:translateY(-6px) scaleY(1.04) rotate(2deg)}75%{transform:none}}
+@media (prefers-reduced-motion: reduce){.turn .pop,.turn .who,.turn .move{animation:none}}
+.fine{font-size:.72em;line-height:1.2}
+.turn svg,#lineup svg,.pawn svg{overflow:visible}
+.turn .pop.e-nhsr{animation:droneup 1.5s cubic-bezier(.25,.8,.3,1) both}
+@keyframes droneup{0%{transform:translateY(170px) rotate(-6deg);opacity:0}25%{opacity:1}55%{transform:translateY(-10px) rotate(4deg)}78%{transform:translateY(4px) rotate(-2deg)}100%{transform:none}}
+.turn .move.m-nhsr{animation:hover 2.4s ease-in-out 1.5s infinite}
+@keyframes hover{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-9px) rotate(3deg)}50%{transform:translateY(-3px) rotate(0)}75%{transform:translateY(-10px) rotate(-3deg)}}
+@media (prefers-reduced-motion: reduce){.turn .pop.e-nhsr,.turn .move.m-nhsr{animation:none}}
+.decor{position:absolute;width:0;height:0;transform-style:preserve-3d}
+.decor img{position:absolute;display:block;transform-origin:50% 100%;transform:rotateX(-34deg)}
+#plane>img.boardimg{left:0;top:0;width:1200px;height:1200px;border-radius:6px;object-fit:cover}
+/* celebrations after a right answer */
+.cheer{position:absolute;left:10px;top:40px;width:210px}
+.cheer svg g{transform-box:view-box}
+.cheer .all{transform-origin:30px 80px}.cheer .upper{transform-origin:30px 56px}
+.cheer .la{transform-origin:21px 33px}.cheer .ra{transform-origin:39px 33px}.cheer .ll{transform-origin:26px 55px}.cheer .rl{transform-origin:34px 55px}
+.cheerword{position:absolute;left:0;right:0;top:330px;text-align:center;font-family:var(--f-display);font-size:44px;color:#1f9e86;animation:pop .7s cubic-bezier(.2,.9,.3,1.3) both}
+/* Exempt: one-footed twirl on roller skates */
+.c-exempt .all{animation:twirl 2.2s ease-in-out both}
+@keyframes twirl{0%{transform:none}15%{transform:translateY(-6px)}35%{transform:translateY(-6px) scaleX(-1)}55%{transform:translateY(-6px) scaleX(1)}75%{transform:translateY(-6px) scaleX(-1)}90%{transform:translateY(-6px) scaleX(1)}100%{transform:none}}
+.c-exempt .ll{animation:liftleg 2.2s ease-in-out both}
+@keyframes liftleg{0%,100%{transform:none}15%,88%{transform:rotate(55deg)}}
+.c-exempt .la{animation:armsup 2.2s ease-in-out both}.c-exempt .ra{animation:armsup2 2.2s ease-in-out both}
+@keyframes armsup{0%,100%{transform:none}15%,88%{transform:rotate(110deg)}}
+@keyframes armsup2{0%,100%{transform:none}15%,88%{transform:rotate(-110deg)}}
+/* Full Board: take a bow */
+.c-full .upper{animation:bow 2.4s ease-in-out both}
+@keyframes bow{0%,100%{transform:none}30%,65%{transform:translateY(9px) scaleY(.8)}}
+.c-full .la{animation:bowarm 2.4s ease-in-out both}
+@keyframes bowarm{0%,100%{transform:none}30%,65%{transform:rotate(-85deg)}}
+.c-full .hd{animation:bowhead 2.4s ease-in-out both;transform-origin:30px 28px}
+@keyframes bowhead{0%,100%{transform:none}30%,65%{transform:translateY(6px) scaleY(.8)}}
+/* Expedited: touchdown dance, Roger Rabbit legs */
+.c-expedited .all{animation:hop 2.4s ease-in-out both}
+@keyframes hop{0%,100%{transform:none}12.5%,37.5%,62.5%,87.5%{transform:translateY(-8px)}25%,50%,75%{transform:translateY(0)}}
+.c-expedited .ll{animation:kickL 2.4s ease-in-out both}.c-expedited .rl{animation:kickR 2.4s ease-in-out both}
+@keyframes kickL{0%,100%{transform:none}12.5%,62.5%{transform:rotate(30deg) scaleY(.7)}37.5%,87.5%{transform:rotate(-8deg)}}
+@keyframes kickR{0%,100%{transform:none}12.5%,62.5%{transform:rotate(8deg)}37.5%,87.5%{transform:rotate(-30deg) scaleY(.7)}}
+.c-expedited .la{animation:pumpL 2.4s ease-in-out both}.c-expedited .ra{animation:pumpR 2.4s ease-in-out both}
+@keyframes pumpL{0%,100%{transform:none}12.5%,62.5%{transform:rotate(70deg)}37.5%,87.5%{transform:rotate(20deg)}}
+@keyframes pumpR{0%,100%{transform:none}12.5%,62.5%{transform:rotate(-20deg)}37.5%,87.5%{transform:rotate(-70deg)}}
+/* NHSR: the robot, then bend down */
+.c-nhsr .la{animation:robL 2.6s steps(1,end) both}.c-nhsr .ra{animation:robR 2.6s steps(1,end) both}
+@keyframes robL{0%{transform:none}10%{transform:rotate(45deg)}20%{transform:rotate(100deg)}30%{transform:rotate(45deg)}40%{transform:rotate(100deg)}50%,100%{transform:none}}
+@keyframes robR{0%{transform:none}15%{transform:rotate(-100deg)}25%{transform:rotate(-45deg)}35%{transform:rotate(-100deg)}45%{transform:rotate(-45deg)}55%,100%{transform:none}}
+.c-nhsr .hd{animation:robH 2.6s steps(1,end) both;transform-origin:30px 28px}
+@keyframes robH{0%{transform:none}10%{transform:rotate(-12deg)}25%{transform:rotate(12deg)}40%{transform:rotate(-12deg)}55%,100%{transform:none}}
+.c-nhsr .all{animation:robBend 2.6s ease-in-out both}
+@keyframes robBend{0%,58%{transform:none}72%,86%{transform:translateY(16px) scaleY(.78)}100%{transform:none}}
+@media (prefers-reduced-motion: reduce){.cheer *{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="rotate"><div class="phone"></div><div>Turn your phone sideways to play IRB Land.</div></div>
+<div id="frame"><div id="stage">
+  <div id="sign"><img src="assets/irb-land-sign.png" alt="IRB Land"></div>
+  <span class="tab">ENG 6812 · Week 13</span>
+  <div class="tools">
+    <button class="tool" id="undoBtn" type="button">Undo last turn</button>
+    <button class="tool" id="soundBtn" type="button" aria-pressed="true">Sound: on</button>
+    <button class="tool" id="newBtn" type="button">New game</button>
+  </div>
+
+  <div id="view" aria-label="Game board">
+    <div id="plane">
+      
+      <img class="boardimg" src="assets/board-background.jpg" alt="A candy-covered game board">
+      <svg id="board" viewBox="0 0 1200 1200" role="img" aria-label="IRB Land path from Research Idea up to IRB Castle"></svg>
+      <div id="sprites"></div>
+    </div>
+  </div>
+
+  <div id="side">
+    <div class="panel torn deckpanel"><div class="tape"></div>
+      <div class="deckzone">
+        <button class="deck ready" id="deck" type="button" aria-label="Draw a card"><div class="back"><span>IRB Land</span></div></button>
+        <div class="flip" id="flip"><div class="inner"><div class="face f-back"></div><div class="face f-front" id="cardFront"></div></div></div>
+      </div>
+      <p class="hint" id="hint">Click the deck to draw a card.</p>
+    </div>
+    <div class="panel torn turnpanel"><div class="tape" style="left:auto;right:18px;transform:rotate(6deg)"></div>
+      <div class="turn" id="turnBox"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="startOv">
+    <div class="rulecard torn">
+      <div>
+        <h2>How to play</h2>
+        <ol class="rules">
+          <li>On your turn, click the deck. Your pawn moves to the next square of that color. Double cards move two squares of that color. Picture cards send you to a landmark.</li>
+          <li>Your team has 30 seconds to answer. Right answer: stay on the new square. Wrong answer: go back.</li>
+          <li>Start at the bottom and climb to IRB Castle at the top. The first team there wins.</li>
+        </ol>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:space-between">
+        <div class="lineup" id="lineup"></div>
+        <div class="actions" style="justify-content:center"><button class="big" id="startBtn" type="button">Start the game</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay dim" id="qOv" hidden><div class="qcard torn" id="qcard"></div></div>
+
+  <div class="overlay" id="winOv" hidden><div class="wincard torn" id="winBox"></div></div>
+</div></div>
+
+<script>
+const COLORS={red:{name:"Red",hex:"#d63a3a"},orange:{name:"Orange",hex:"#ec8a22"},yellow:{name:"Yellow",hex:"#f2c12c"},green:{name:"Green",hex:"#3c9a47"},blue:{name:"Blue",hex:"#2c76c6"},purple:{name:"Purple",hex:"#8a4dbd"}};
+const CKEYS=["red","orange","yellow","green","blue","purple"];
+const N=35;
+const DECOR=[];
+const LANDMARKS={
+  minors:{name:"Protected Populations Peak",at:4},
+  lottery:{name:"Lottery Lagoon",at:11},
+  username:{name:"Username Bridge",at:17},
+  thicket:{name:"Track Changes Thicket",at:22},
+  finalize:{name:"Finalize Falls",at:27}
+};
+const TEAMS=[
+  {id:"exempt",name:"Exempt",star:true,form:"HRP-255",fine:"*from certain federal regulations"},
+  {id:"expedited",name:"Expedited",form:"HRP-503",tag:"Special Populations",fine:"Uses the full form"},
+  {id:"nhsr",name:"NHSR",form:"HRP-250",tag:"Not a human subject",tag2:"*beep* *boop*"},
+  {id:"full",name:"Full Board",form:"HRP-503",tag:"Full, long, detailed form."}
+];
+const NODES={"segs": ["M950 1047 L946 1044 L943 1041 L939 1038 L935 1035 L931 1032 L927 1029 L923 1026", "M923 1026 L919 1024 L915 1021 L911 1019 L907 1017 L902 1015 L898 1012 L894 1011", "M894 1011 L889 1009 L885 1007 L880 1005 L876 1004 L871 1002 L867 1001 L862 1000", "M862 1000 L858 998 L853 997 L848 996 L844 995 L839 994 L834 993 L830 992", "M830 992 L825 991 L820 991 L815 990 L811 989 L806 988 L801 987 L797 987", "M797 987 L792 986 L788 985 L783 984 L779 984 L775 983 L770 982 L766 981 L762 980 L757 979 L753 978 L749 977 L744 976 L740 975 L736 974 L731 973", "M731 973 L727 971 L722 970 L718 968 L713 967 L709 965 L704 963 L700 961", "M700 961 L696 959 L692 956 L688 954 L684 951 L680 948 L676 945 L673 942", "M673 942 L669 938 L666 935 L664 931 L661 927 L659 922 L658 918 L657 913", "M657 913 L656 908 L655 904 L655 899 L655 894 L656 889 L657 885 L658 880", "M658 880 L659 875 L660 871 L662 866 L664 862 L666 858 L668 854 L671 850", "M671 850 L674 846 L677 842 L681 839 L684 836 L688 833 L692 830 L696 828", "M696 828 L700 826 L704 824 L709 823 L713 821 L717 820 L721 819 L726 818 L730 817 L734 816 L739 815 L743 814 L747 813 L752 812 L756 812 L761 811", "M761 811 L765 810 L770 809 L775 808 L779 808 L784 807 L789 806 L793 804", "M793 804 L798 803 L803 802 L807 800 L812 799 L816 797 L820 795 L825 793", "M825 793 L829 791 L833 788 L837 785 L841 783 L844 780 L848 776 L851 773", "M851 773 L855 770 L858 766 L861 762 L864 759 L867 755 L870 751 L872 747", "M872 747 L875 743 L877 739 L879 734 L881 730 L883 725 L884 721 L886 716", "M886 716 L887 712 L887 708 L888 703 L888 699 L888 694 L888 690 L887 686 L886 681 L885 677 L883 673 L881 669 L879 665 L877 661 L874 657 L872 654", "M872 654 L868 650 L865 647 L862 643 L858 640 L854 637 L851 634 L847 631", "M847 631 L843 629 L839 626 L835 624 L831 621 L827 619 L822 617 L818 615", "M818 615 L814 612 L809 610 L805 609 L801 607 L796 605 L792 603 L787 602", "M787 602 L783 600 L778 599 L774 597 L769 596 L764 595 L760 593 L755 592", "M755 592 L751 591 L747 590 L742 589 L738 588 L734 587 L729 586 L725 585 L720 584 L716 583 L712 582 L707 581 L703 580 L699 579 L694 578 L690 576", "M690 576 L686 575 L681 574 L676 573 L672 571 L667 570 L663 568 L658 566", "M658 566 L654 564 L650 563 L645 561 L641 558 L637 556 L633 554 L628 551", "M628 551 L625 549 L621 546 L617 543 L613 540 L609 537 L606 534 L603 530", "M603 530 L599 527 L596 523 L593 519 L590 516 L588 512 L585 508 L582 504", "M582 504 L580 500 L578 496 L576 492 L575 488 L573 483 L572 479 L571 475 L570 470 L569 466 L568 462 L568 457 L567 453 L567 448 L567 444 L566 439", "M566 439 L566 435 L566 430 L565 425 L565 420 L564 416 L564 411 L563 406", "M563 406 L562 402 L560 397 L558 393 L556 388 L554 384 L551 381 L548 377", "M548 377 L544 374 L541 370 L537 368 L533 365 L529 362 L525 360 L520 358", "M520 358 L516 356 L512 354 L507 352 L503 350 L498 349 L494 347 L489 346", "M489 346 L485 345 L480 344 L475 342 L471 341 L466 340 L461 339 L457 338", "M457 338 L452 337 L447 337 L443 336 L438 335 L433 334 L428 333 L424 333", "M424 333 L419 332 L414 331 L410 330 L405 329 L400 329 L395 328 L391 327", "M391 327 L386 326 L381 326 L376 325 L371 325 L366 324 L362 324 L357 323 L352 322 L347 322"], "pts": [[1040, 952], [909.0, 1018.0], [878.0, 1004.0], [846.0, 996.0], [813.0, 989.0], [764.0, 981.0], [715.0, 967.0], [686.0, 953.0], [663.0, 929.0], [655.0, 896.0], [663.0, 864.0], [682.0, 837.0], [728.0, 817.0], [777.0, 808.0], [809.0, 800.0], [839.0, 784.0], [863.0, 761.0], [880.0, 732.0], [887.0, 683.0], [860.0, 642.0], [833.0, 622.0], [803.0, 608.0], [771.0, 597.0], [723.0, 584.0], [674.0, 572.0], [643.0, 559.0], [615.0, 541.0], [592.0, 518.0], [570.0, 473.0], [565.0, 423.0], [557.0, 391.0], [535.0, 366.0], [505.0, 351.0], [473.0, 342.0], [440.0, 335.0], [407.0, 330.0], [369.0, 324.0]], "ang": [-142, -151, -161, -168, -170, -168, -160, -146, -119, -88, -66, -40, -13, -11, -20, -37, -52, -66, -103, -138, -150, -158, -163, -167, -162, -153, -141, -127, -103, -95, -117, -145, -160, -167, -170, -171, -173], "seps": [[923, 1026, -147, 59], [894, 1011, -156, 60], [862, 1000, -165, 60], [830, 992, -170, 60], [797, 987, -170, 61], [731, 973, -163, 64], [700, 961, -154, 65], [673, 942, -135, 67], [657, 913, -102, 70], [658, 880, -77, 72], [671, 850, -54, 72], [696, 828, -28, 69], [761, 811, -10, 63], [793, 804, -14, 58], [825, 793, -28, 60], [851, 773, -45, 64], [872, 747, -58, 68], [886, 716, -75, 68], [872, 654, -129, 68], [847, 631, -145, 64], [818, 615, -154, 57], [787, 602, -161, 52], [755, 592, -165, 50], [690, 576, -165, 50], [658, 566, -159, 49], [628, 551, -147, 52], [603, 530, -134, 58], [582, 504, -120, 63], [566, 439, -94, 64], [563, 406, -103, 64], [548, 377, -133, 58], [520, 358, -154, 52], [489, 346, -164, 48], [457, 338, -169, 47], [424, 333, -170, 48], [391, 327, -172, 48]], "forest": {"x": 237, "y": 242, "w": 220, "h": 130}, "wid": [57, 59, 60, 60, 60, 61, 64, 65, 67, 70, 72, 69, 63, 58, 58, 60, 64, 68, 68, 64, 57, 52, 50, 50, 49, 49, 52, 58, 63, 64, 58, 52, 48, 47, 46, 48, 46]};
+const END_NAME="IRB Castle";
+
+/* ---------- Questions ---------- */
+const OPTS503=s=>s;
+const SINGLE=[
+ {kind:"boxes",label:"HRP-255 · Study Population",scenario:"You will interview 10 UCF graduate students about writing anxiety.",prompt:"Which boxes do you check?",head:"Study Population",sub:"(Check all that apply)",
+  opts:[["UCF Students, Faculty or Staff",1],["Children or Young Adults Under the age of 18"],["Adults over 65"],["Pregnant Women"],["Prisoners"],["Adults Unable to Consent"],["Additional Vulnerable Population"]],
+  why:"Check UCF Students, Faculty or Staff whenever UCF students take part. The other boxes flag groups that need extra protection."},
+ {kind:"boxes",label:"HRP-255 · Identifiable Data Collection",scenario:"Your Qualtrics survey records IP addresses, and at the end participants type an email address so you can send them a $10 gift card.",prompt:"Which boxes do you check?",head:"Identifiable Data Collection",sub:"(Check all that apply)",
+  opts:[["None"],["Name"],["Contact Information (email, phone number, address, etc.)",1],["IDs (NID, IP Address, SONA IDs etc.)",1],["Video Recording"],["Voice Recording"],["Image"]],
+  why:"IP addresses are identifiers, so check IDs. Email addresses are contact information. The form says this section applies to identifiable data collected for any reason, including recruitment, scheduling, and providing compensation, even if it is not used in analysis."},
+ {kind:"boxes",label:"HRP-255 · Compensation",scenario:"Students in your composition course earn 2 points of extra credit for completing your survey.",prompt:"Which boxes do you check?",head:"Compensation",sub:"(Check all that apply)",
+  opts:[["No"],["Course Credit (students)",1],["Alternate Assignment (students)",1],["Monetary"],["Lottery"],["Other"]],
+  why:"The form says that if you offer course credit, Alternate Assignment must also be selected, so students who do not take part can still earn the points."},
+ {kind:"boxes",label:"HRP-255 · Deception/Incomplete Disclosure",scenario:"You tell participants the study is about game usability, but you are really measuring gender stereotypes in character choice.",prompt:"Which boxes do you check?",head:"Involves Deception/Incomplete Disclosure",sub:"",
+  opts:[["No"],["Yes",1],["HRP-254 (Explanation of Research) states use of deception.",1],["HRP-509 (Debriefing Statement) uploaded in Consent Document Section.",1]],
+  why:"If Yes, both items must apply: your HRP-254 says the study uses deception, and you upload an HRP-509 debriefing statement."},
+ {kind:"boxes",label:"HRP-255 · Sensitive/Illegal Information",scenario:"Your survey asks game fans whether they have ever pirated games.",prompt:"Which boxes do you check?",head:"Sensitive/Illegal Information",sub:"",
+  opts:[["No"],["Yes",1],["Illegal behaviors (stealing, underage drinking, drug use, etc.)",1],["Drug or Alcohol Abuse"],["Mental health or other sensitive health or genetic information"],["Damaging to Employability, Insurability, or Reputation",1],["Added “prefer not to answer” response option to sensitive/illegal information questions.",1]],
+  why:"Piracy is an illegal behavior, and an admission of it could damage a participant's employability or reputation if it were disclosed. The form also has a box for adding a “prefer not to answer” option to sensitive questions."},
+ {kind:"boxes",label:"HRP-255 · Validity",scenario:"You post your survey link on Reddit and promise a gift card to everyone who finishes.",prompt:"Which safeguards would be most appropriate? (Check all that apply.)",head:"Validity",sub:"Safeguards to prevent repeat, Bot/AI, or fraudulent responses",
+  opts:[["CAPTCHA (specify)",1],["Validity Check Questions (specify)",1],["Other (specify): a question at the top that asks participants whether they have taken this survey before",1],["Only post the link on sites that require users to post under their real names"],["Raise the gift card amount so people take the survey more seriously"]],
+  why:"A public link plus a gift card attracts bots and repeat takers. Use all three safeguards: CAPTCHA stops bots, validity check questions catch careless or AI answers, and a repeat-taker question catches people trying to earn the gift card twice. Real-name sites do not stop bots or repeat takers, and a bigger reward attracts more fraudulent responses."},
+ {kind:"boxes",label:"HRP-255 · Type of Interaction",scenario:"You interview participants on Zoom, record the video, and transcribe it with Otter.ai.",prompt:"Which boxes do you check?",head:"Type of Interaction(s) to Take Place for Data Collection Purposes",sub:"(Check all that apply)",
+  opts:[["Online survey, test, task"],["In-person/Face-to-Face survey, test, task"],["Voice Call"],["Voice/Video Call (i.e. Skype)",1],["Voice Recordings",1],["Video Recordings",1],["Observation"]],
+  why:"Check the video call, the voice recording, and the video recording, since the Zoom recording captures both. The form then asks you to describe the recording device and the transcription process or service."},
+ {kind:"boxes",label:"HRP-255 · Data Retention",scenario:"Your plan says: “I will delete all of my interview data when I graduate in two years.”",prompt:"Which boxes meet UCF's minimum retention requirement?",head:"Data Retention",sub:"(At least one selection for de-identified data must be made)",
+  opts:[["Identifiable data stored for a minimum of 5 years after study closure (per UCF policy)",1],["Identifiable data stored for a certain amount of time or specific timepoint longer than 5 years"],["De-identified data stored for a minimum of 5 years after study closure (per UCF policy)",1],["De-identified data stored for a certain amount of time or specific timepoint longer than 5 years"]],
+  why:"UCF policy keeps data at least 5 years after the study closes, and the form requires at least one de-identified selection. Two years is too short. The longer-than-5-years boxes are for studies that choose to keep data longer than the minimum."},
+ {kind:"boxes",label:"HRP-255 · Type of Interaction",scenario:"After each interview, you send participants their transcript so they can check it for accuracy.",prompt:"Which box covers this step?",head:"Type of Interaction(s) to Take Place for Data Collection Purposes",sub:"(Check all that apply)",
+  opts:[["Online survey, test, task"],["Voice/Video Call (i.e. Skype)"],["Observation"],["Recontact for member checking/respondent validation",1],["Other (specify)"]],
+  why:"Sending transcripts back is member checking, and the form has its own box for recontacting participants."},
+ {kind:"boxes",label:"HRP-255 · Data Sharing",scenario:"You want to deposit de-identified interview transcripts in a public data repository.",prompt:"Which box do you check?",head:"Data Sharing",sub:"(Choose one selection for data sharing)",
+  opts:[["De-identified data collected during this research may be shared with other researchers and/or future research studies.",1],["Data collected during this research will not be shared with other researchers and/or future research studies, even if identifiers are removed."]],
+  why:"Data sharing is a choose-one box, and your HRP-254 has to tell participants the same thing about future use of their information."},
+ {kind:"boxes",label:"HRP-255 · Recruitment Methods",scenario:"You recruit with a printed flyer and an Instagram post that use exactly the same text.",prompt:"Which boxes do you check?",head:"Recruitment Methods",sub:"(Unless the content is exactly the same for all versions, upload a copy of each type selected)",
+  opts:[["Flyer",1],["Email"],["SONA"],["Social Media Post",1],["Other (specify)"],["The document content is the same for all methods",1]],
+  why:"Check both methods. Because the text is identical, you can also check that the content is the same and upload one copy."},
+ {kind:"boxes",label:"HRP-255 · Research Locations",scenario:"Your survey runs on Qualtrics, and you invite fans in the United States and in Brazil.",prompt:"Which boxes do you check?",head:"Research Locations",sub:"(Check all that apply)",
+  opts:[["UCF Owned or Operated Location(s)"],["Online: Qualtrics",1],["Online: Prolific"],["Participants within the United States",1],["Participants outside the United States",1],["International (specify all applicable locations)",1]],
+  why:"Online studies say where participants are. Participants outside the United States also trigger UCF's international research requirements, so check International and list Brazil."},
+ {kind:"choice",label:"HRP-503 · From the PI's approved ELLE study",scenario:"“Participants are minimally at the risk of simulation sickness (feelings of dizziness), common in some fast-moving VR games.”",prompt:"Which HRP-503 section does this belong in?",
+  opts:["Risks to Subjects","Potential Benefits to Subjects","Withdrawal of Subjects","Setting"],ans:[0],why:"Any physical, psychological, or social risk goes in Risks to Subjects, even a small one."},
+ {kind:"choice",label:"HRP-503 · From the PI's approved ELLE study",scenario:"“They may enjoy the game and learn a few Portuguese words.”",prompt:"Which HRP-503 section does this belong in?",
+  opts:["Objectives","Potential Benefits to Subjects","Sharing Results with Subjects","Compensation"],ans:[1],why:"Potential Benefits to Subjects covers direct benefits to the participants themselves."},
+ {kind:"choice",label:"HRP-503 · From the PI's approved ELLE study",scenario:"“Any adult at least 18 years of age who is not fluent in Portuguese (beginner level or lower) and has not already participated in this study.”",prompt:"Which HRP-503 section does this belong in?",
+  opts:["Number of Subjects","Recruitment Methods","Inclusion/Exclusion Criteria","Consent Process"],ans:[2],why:"Who can and cannot take part goes in Inclusion/Exclusion Criteria."},
+ {kind:"choice",label:"HRP-503 · From the PI's approved ELLE study",scenario:"“Participants will receive a $20 Amazon gift card at the end of the study session or whenever they choose to leave early.”",prompt:"Which section of the current HRP-503 does this belong in?",
+  opts:["Economic Burden to Subjects","Compensation","Recruitment Methods","Withdrawal of Subjects"],ans:[1],why:"The 2025 template gives Compensation its own section. Saying that people who leave early still get paid matters here."},
+ {kind:"choice",label:"HRP-503 · From the PI's approved ELLE study",scenario:"“The study takes place on the UCF campus, and travel and parking to the lab may cost participants money.”",prompt:"Which HRP-503 section does this belong in?",
+  opts:["Compensation","Setting","Economic Burden to Subjects","Risks to Subjects"],ans:[2],why:"Costs that participants pay to take part go in Economic Burden to Subjects."},
+ {kind:"choice",label:"HRP-503 · From the PI's approved ELLE study",scenario:"“A researcher will read the consent form aloud, answer any questions, and ask for verbal consent to continue.”",prompt:"Which HRP-503 section does this belong in?",
+  opts:["Study Procedures","Consent Process","Setting","Withdrawal of Subjects"],ans:[1],why:"How you inform people and get their agreement goes in Consent Process."},
+ {kind:"choice",label:"HRP-503 · From the PI's approved ELLE study",scenario:"“We will use a one-way ANOVA, controlling for differences in language and gaming experience.”",prompt:"Which HRP-503 section does this belong in?",
+  opts:["Data Validity","What is Being Measured or Evaluated?","Data Analysis Plan","Endpoints"],ans:[2],why:"The Data Analysis Plan explains how you will analyze the data to answer your research questions."},
+ {kind:"choice",label:"HRP-503 · From the PI's approved ELLE study",scenario:"“We do not plan to share results with participants directly, though they may see aggregated results in publications.”",prompt:"Which HRP-503 section does this belong in?",
+  opts:["Data Management and Confidentiality","Potential Benefits to Subjects","Sharing Results with Subjects","Withdrawal of Subjects"],ans:[2],why:"Whether participants will see results goes in Sharing Results with Subjects."},
+ {kind:"choice",label:"HRP-503 · Expedited protocol",scenario:"You will pull students' course grades from Canvas to compare with their survey answers.",prompt:"Which HRP-503 section must you complete?",
+  opts:["HIPAA","FERPA","Setting","Data Analysis Plan"],ans:[1],why:"Grades come from educational records, so the FERPA section applies. HIPAA is for medical records."},
+ {kind:"choice",label:"HRP-503 · Expedited protocol",scenario:"You add attention-check questions to catch bots and careless answers.",prompt:"Which HRP-503 section does this belong in?",
+  opts:["Data Analysis Plan","Data Validity","Risks to Subjects","Provisions to Monitor the Data"],ans:[1],why:"Data Validity asks for safeguards against repeat, Bot/AI, or fraudulent responses."},
+ {kind:"choice",label:"Which form?",scenario:"You analyze a de-identified dataset that you downloaded from a public data repository.",prompt:"Which form do you submit?",
+  opts:["HRP-250 (Not Human Subjects Research)","HRP-255 (Exempt)","HRP-255SR (Exempt, secondary research)","HRP-503 (Expedited or Full Board)"],ans:[0],why:"UCF's guidance lists existing de-identified information, including public datasets and repositories, under the HRP-250."},
+ {kind:"choice",label:"Which form?",scenario:"You record an oral history with a retired professor for the library's archive.",prompt:"Which form do you submit?",
+  opts:["HRP-250 (Not Human Subjects Research)","HRP-255 (Exempt)","HRP-255SR (Exempt, secondary research)","HRP-503 (Expedited or Full Board)"],ans:[0],why:"UCF's guidance lists oral histories as an example of a Not Research Determination on the HRP-250, with limits the IRB explains."},
+ {kind:"choice",label:"Which form?",scenario:"You survey adults about their symptoms of anxiety and depression.",prompt:"Which form do you submit?",
+  opts:["HRP-250 (Not Human Subjects Research)","HRP-255 (Exempt)","HRP-255SR (Exempt, secondary research)","HRP-503 (Expedited or Full Board)"],ans:[3],why:"Exempt is for research with only informational risk. UCF lists survey or interview research that may include health or psychological risks under expedited."},
+ {kind:"choice",label:"Which form?",scenario:"You reuse identifiable records from an earlier study, and the new research does not require consent.",prompt:"Which form do you submit?",
+  opts:["HRP-250 (Not Human Subjects Research)","HRP-255 (Exempt)","HRP-255SR (Exempt, secondary research)","HRP-503 (Expedited or Full Board)"],ans:[2],why:"The HRP-255SR is for exempt category 4: secondary use of identifiable private information that does not require consent."},
+ {kind:"choice",label:"Which form?",scenario:"An anonymous online survey asks adult gamers about their favorite game tutorials.",prompt:"Which form do you submit?",
+  opts:["HRP-250 (Not Human Subjects Research)","HRP-255 (Exempt)","HRP-255SR (Exempt, secondary research)","HRP-503 (Expedited or Full Board)"],ans:[1],why:"Survey research with adults that poses only informational risk is the classic exempt study."}
+];
+const CATS=["Category 1","Category 2(i)","Category 2(ii)","Category 2(iii)","Category 3(i)(A)","Not exempt"];
+const DOUBLE=[
+ {scenario:"You compare two feedback methods in your own regular composition sections.",opts:["Category 1: normal educational practices in an educational setting","Category 2(i): survey, interview, or public observation; no one can be identified","Category 3(i)(A): brief, harmless activity with adults who agree; no one can be identified","Not exempt: submit the HRP-503 protocol instead"],ans:[0],why:"Category 1 covers normal educational practices in commonly accepted educational settings, including comparing instructional techniques."},
+ {scenario:"An anonymous survey (no names, no IP addresses) asks adult employees whether they have seen misconduct at work.",opts:["Category 2(i): survey, interview, or public observation; no one can be identified","Category 2(ii): survey, interview, or public observation; disclosure would not put people at risk","Category 2(iii): survey, interview, or public observation; identifiable, with privacy and confidentiality protections","Not exempt: submit the HRP-503 protocol instead"],ans:[0],why:"2(ii) fails, because disclosure could damage employability. 2(i) works, because no one can be identified."},
+ {scenario:"You record named interviews with employees who criticize their employer, and you store the files securely.",opts:["Category 2(i): survey, interview, or public observation; no one can be identified","Category 2(ii): survey, interview, or public observation; disclosure would not put people at risk","Category 2(iii): survey, interview, or public observation; identifiable, with privacy and confidentiality protections","Not exempt: submit the HRP-503 protocol instead"],ans:[2],why:"They are identifiable, and disclosure could hurt them, so only 2(iii) fits: identifiable data with adequate privacy and confidentiality protections."},
+ {kind:"boxes",scenario:"You record named interviews with adult knitters about their favorite patterns.",prompt:"Which exemption categories could apply? (Select all that apply.)",head:"Section 1: Exemption Categories",sub:"(Select all that apply)",opts:[["Category 2(i): survey, interview, or public observation; no one can be identified"],["Category 2(ii): survey, interview, or public observation; disclosure would not reasonably place subjects at risk",1],["Category 2(iii): survey, interview, or public observation; identifiable information may be recorded if adequate privacy and confidentiality protections exist",1],["Not exempt: submit the HRP-503 protocol instead"]],why:"Both apply. Disclosure would not reasonably place knitters at risk, so 2(ii) fits, and 2(iii) also fits because you can record names with adequate privacy and confidentiality protections."},
+ {scenario:"Adults play your 20-minute language game in one session, then take an anonymous survey.",opts:["Category 2(i): survey, interview, or public observation; no one can be identified","Category 3(i)(A): brief, harmless activity with adults who agree; no one can be identified","Category 1: normal educational practices in an educational setting","Not exempt: submit the HRP-503 protocol instead"],ans:[1],why:"Category 3(i) covers brief benign behavioral interventions (3 hours or less, same day) with adults who agree in advance. (A) means they cannot be identified."},
+ {scenario:"Adults play your game for 4 hours in one day, then take an anonymous survey.",opts:["Category 3(i)(A): brief, harmless activity with adults who agree; no one can be identified","Category 3(i)(C): brief, harmless activity with adults who agree; identifiable, with privacy and confidentiality protections","Category 2(i): survey, interview, or public observation; no one can be identified","Not exempt: submit the HRP-503 protocol instead"],ans:[3],why:"Category 3 is limited to 3 hours or less on the same day, so this does not qualify."},
+ {scenario:"You take notes on public behavior at a gaming convention without interacting with anyone or recording names.",opts:["Category 1: normal educational practices in an educational setting","Category 2(i): survey, interview, or public observation; no one can be identified","Category 2(iii): survey, interview, or public observation; identifiable, with privacy and confidentiality protections","Not exempt: submit the HRP-503 protocol instead"],ans:[1],why:"Category 2 includes observation of public behavior. Your notes contain no identifiers, so 2(i) fits."},
+ {scenario:"Your interviews ask participants to describe traumatic experiences in detail, which creates more than minimal risk.",opts:["Category 2(i): survey, interview, or public observation; no one can be identified","Category 2(ii): survey, interview, or public observation; disclosure would not put people at risk","Category 3(i)(A): brief, harmless activity with adults who agree; no one can be identified","Not exempt: submit the HRP-503 protocol instead"],ans:[3],why:"Section 1 starts with minimal risk. If a study involves greater than minimal risk, the HRP-255 says STOP and complete a protocol instead."}
+];
+const FORMS4=["HRP-250 (Not Human Subjects Research)","HRP-255 (Exempt)","HRP-255SR (Exempt, secondary research)","HRP-503 (Expedited or Full Board)"];
+const LANDQ={
+ minors:[
+  {scenario:"You want to survey high school students about how they use TikTok.",prompt:"Which form do you submit?",opts:FORMS4,ans:[3],why:"The HRP-255 says surveys or interviews with minors do not qualify for exemption. UCF also requires a parent permission form (HRP-502b) for research with children."},
+  {scenario:"A few 17-year-olds might find the link to your public survey.",prompt:"What does the HRP-254 tell participants?",opts:["Nothing, as long as the survey is anonymous","You must be 18 years of age or older to take part","Minors may take part if a parent is nearby","Minors are fine under Category 2(i), because no one can be identified"],ans:[1],why:"The HRP-254 template says participants must be 18 years of age or older. Screen out minors at the start of the survey."}],
+ username:[
+  {scenario:"Your HRP-503 says you will record usernames from a Discord server.",prompt:"Which section explains how you keep those usernames safe?",opts:["Potential Benefits to Subjects","Setting","Data Management and Confidentiality","Economic Burden to Subjects"],ans:[2],why:"Data Management and Confidentiality covers storage, protection, and access. The template notes that privacy refers to people and confidentiality refers to data."}],
+ lottery:[
+  {scenario:"Everyone who finishes your survey is entered into a raffle for one $100 gift card.",prompt:"What happens with the Lottery box?",opts:["It is fine if you state the odds","The IRB generally does not allow lotteries, so pay every participant instead","Check Monetary: Gift card, since the prize is a gift card","No compensation box is needed"],ans:[1],why:"The HRP-255 says Florida's strict lottery laws and the appearance of coercion mean the IRB generally does not allow lotteries, unless lotteries are what the study investigates."},
+  {scenario:"You pay each participant a $15 gift card.",prompt:"What must your HRP-254 describe?",opts:["Which store the gift card comes from","Conditions that would prevent a participant from receiving full compensation","Your total study budget","Nothing, because compensation is optional"],ans:[1],why:"The HRP-254 asks you to describe conditions that would prevent full compensation, which also helps prevent fraudulent survey responses."}],
+ thicket:[
+  {scenario:"Your protocol is ready, except it still contains your advisor's comments and track changes.",prompt:"What happens at pre-review?",opts:["The reviewer ignores them","The IRB Office withdraws the application and asks you to correct it before you resubmit","The IRB approves it with a warning","Your advisor is removed from the study"],ans:[1],why:"UCF's application instructions say documents must be free of track changes and comments, or the IRB Office will withdraw the application."},
+  {scenario:"You are uploading your protocol and consent form to Huron.",prompt:"What file format must they be?",opts:["PDF","Microsoft Word","A Google Docs link","Any format"],ans:[1],why:"The protocol and consent must be Word documents so the IRB can compare changes between versions."}],
+ finalize:[
+  {scenario:"You clicked Finish on your application in Huron.",prompt:"Where is your study now?",opts:["In Pre-Review with the IRB Office","Still in Pre-Submission, until the PI clicks Submit","Approved","Assigned to a reviewer"],ans:[1],why:"Finalizing does not submit the application. The PI must click Submit to move it from Pre-Submission to Pre-Review."},
+  {scenario:"You are a graduate student, and you are the PI on your study.",prompt:"Who must review and sign off before you submit?",opts:["Your department chair","Your faculty advisor","The IRB chair","A classmate"],ans:[1],why:"Graduate student applications need a completed Faculty Advisor Review before the IRB will pre-review them."}]
+};
+
+
+/* ---------- Pawns ---------- */
+function pawnSVG(id,w){
+  const g="#b8743d",gd="#6a3a18";
+  const body=`<path d="M30 28c-7 0-10 3-12 6l-9 4c-4 2-5 6-3 9 2 2 5 2 8 0l5-3v9l-7 15c-2 4 0 8 4 8 3 1 5-1 7-4l7-12 7 12c2 3 4 5 7 4 4 0 6-4 4-8l-7-15v-9l5 3c3 2 6 2 8 0 2-3 1-7-3-9l-9-4c-2-3-5-6-12-6z" fill="${g}" stroke="${gd}" stroke-width="2.5"/>
+   <circle cx="30" cy="17" r="12" fill="${g}" stroke="${gd}" stroke-width="2.5"/>`;
+  const face=`<circle cx="26" cy="15" r="1.8" fill="#fff"/><circle cx="34" cy="15" r="1.8" fill="#fff"/><path d="M25 20q5 4 10 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  const tired=`<path d="M23 14.5h6M31 14.5h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M23.5 16q2.5 2 5 0M31.5 16q2.5 2 5 0" stroke="#fff" stroke-width="1.4" fill="none"/>
+   <path d="M23.5 18.5q2.5 1.4 5 0M31.5 18.5q2.5 1.4 5 0" stroke="#7a4420" stroke-width="1.4" fill="none"/><path d="M26 23.5q4-1.5 8 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  const buttons=`<circle cx="30" cy="38" r="2" fill="#fff"/><circle cx="30" cy="45" r="2" fill="#fff"/>`;
+  let extra="",pre="";
+  if(id==="exempt"){
+    extra=`<path d="M20 29h20l-3 5H23z" fill="#1f9e86" stroke="#0f5f50" stroke-width="1.5"/>
+    <rect x="9" y="70" width="14" height="5" rx="2" fill="#1f9e86"/><rect x="37" y="70" width="14" height="5" rx="2" fill="#1f9e86"/>
+    <circle cx="12" cy="78" r="2.6" fill="#333"/><circle cx="20" cy="78" r="2.6" fill="#333"/><circle cx="40" cy="78" r="2.6" fill="#333"/><circle cx="48" cy="78" r="2.6" fill="#333"/>
+    <rect x="46" y="30" width="12" height="15" rx="1.5" fill="#fff" stroke="#333" stroke-width="1.5"/><path d="M48.5 37l2.5 3 5-6" stroke="#1f9e86" stroke-width="2" fill="none"/>`;
+  } else if(id==="expedited"){
+    extra=`<path d="M22 30l8 4 8-4-2 4h-12z" fill="#c2338f"/>
+    <rect x="44" y="38" width="14" height="40" rx="3" fill="#fff8e6" stroke="#6a3a18" stroke-width="1.5"/>
+    <path d="M47 44h8M47 49h8M47 54h8M47 59h8M47 64h8M47 69h8M47 74h6" stroke="#c2338f" stroke-width="1.3"/>
+    <g transform="rotate(-20 6 44)"><rect x="3" y="26" width="6" height="26" fill="#f2c12c" stroke="#7a5a00" stroke-width="1.2"/><rect x="3" y="23" width="6" height="4" fill="#e98fb9" stroke="#7a5a00" stroke-width="1.2"/><path d="M3 52l3 6 3-6z" fill="#f3d8b0" stroke="#7a5a00" stroke-width="1.2"/><path d="M5.2 56.5l.8 1.6.8-1.6z" fill="#333"/></g>`;
+  } else if(id==="nhsr"){
+    extra=`<line x1="30" y1="5" x2="30" y2="-2" stroke="#555" stroke-width="2.5"/><circle cx="30" cy="-3" r="3.2" fill="#e8434d" stroke="#555" stroke-width="1.5"/>
+    <rect x="21" y="11" width="18" height="8" rx="3" fill="#7fd4f0" stroke="#2c5d7a" stroke-width="1.5"/>
+    <rect x="23" y="34" width="14" height="12" rx="2" fill="#c9d3dc" stroke="#55626e" stroke-width="1.5"/><circle cx="27" cy="40" r="1.6" fill="#e8434d"/><circle cx="33" cy="40" r="1.6" fill="#3c9a47"/>
+    <circle cx="13" cy="41" r="1.8" fill="#55626e"/><circle cx="47" cy="41" r="1.8" fill="#55626e"/>`;
+  } else if(id==="full"){
+    pre=`<rect x="0" y="82" width="60" height="9" rx="4.5" fill="#fff8e6" stroke="#6a3a18" stroke-width="1.5"/><circle cx="2" cy="86.5" r="4.5" fill="#fff8e6" stroke="#6a3a18" stroke-width="1.5"/>
+    <path d="M8 86.5h48" stroke="#2c76c6" stroke-width="1.2" stroke-dasharray="5 2"/>`;
+    extra=`<path d="M19 31l11-3 11 3 4 33H15z" fill="#f7f7f4" stroke="#8a8a8a" stroke-width="1.5"/>
+    <path d="M30 29l-5 14M30 29l5 14" stroke="#b9b9b9" stroke-width="1.5"/><rect x="33" y="47" width="7" height="6" fill="none" stroke="#b9b9b9" stroke-width="1.2"/><path d="M35 46v4" stroke="#2c76c6" stroke-width="1.5"/>
+    <path d="M24 29q-2 10 4 14q6 2 9-6" stroke="#55626e" stroke-width="1.8" fill="none"/><circle cx="37" cy="37" r="2.6" fill="#c9d3dc" stroke="#55626e" stroke-width="1.2"/>
+    <path d="M18.5 9.5q11.5-6 23 0" stroke="#55626e" stroke-width="1.6" fill="none"/><circle cx="30" cy="7.5" r="4" fill="#dfe6ec" stroke="#55626e" stroke-width="1.4"/><circle cx="30" cy="7.5" r="1.2" fill="#55626e"/>
+    <rect x="45" y="34" width="14" height="52" rx="3" fill="#fff8e6" stroke="#6a3a18" stroke-width="1.5"/>
+    <path d="M48 40h8M48 45h8M48 50h8M48 55h8M48 60h8M48 65h8M48 70h8M48 75h8M48 80h8" stroke="#2c76c6" stroke-width="1.3"/>
+    <g transform="translate(3 0) rotate(-8 7 45)"><path d="M7 21.5v-9" stroke="#8a8a8a" stroke-width="1.1" stroke-linecap="round"/><rect x="5.6" y="21" width="2.8" height="3" fill="#c9d3dc" stroke="#55626e" stroke-width=".8"/>
+    <rect x="3" y="24" width="8" height="19" rx="1.5" fill="#eef7fb" stroke="#55626e" stroke-width="1.2"/><rect x="3.6" y="33" width="6.8" height="9.4" rx="1" fill="#c8202f"/>
+    <path d="M3 28h3M3 31h3M3 34h3M3 37h3M3 40h3" stroke="#55626e" stroke-width=".7"/><rect x="1" y="42.5" width="12" height="2.2" rx="1" fill="#c9d3dc" stroke="#55626e" stroke-width=".8"/>
+    <path d="M7 44.7v7" stroke="#55626e" stroke-width="1.6"/><rect x="3.5" y="51.2" width="7" height="2.4" rx="1" fill="#c9d3dc" stroke="#55626e" stroke-width=".8"/></g>`;
+  }
+  const btn=(id==="full")?"":buttons;
+  const vis=id==="nhsr"?"":(id==="full"?tired:face);
+  return `<svg viewBox="0 -8 64 100" width="${w}" height="${(w*100/64).toFixed(1)}" aria-hidden="true">${pre}${body}${btn}${vis}${extra}</svg>`;
+}
+
+
+/* ---------- Board ---------- */
+const SQUARES=[];
+(function(){let c=0;const landAt={};for(const k in LANDMARKS)landAt[LANDMARKS[k].at]=k;
+  for(let i=0;i<N;i++){ if(landAt[i]!==undefined) SQUARES.push({type:"land",id:landAt[i]}); else {SQUARES.push({type:"color",color:CKEYS[c%6]});c++;} }})();
+function NP(pos){return NODES.pts[pos+1];}
+
+function landIcon(id){
+  if(id==="minors") return `<path d="M-30 18L-10-14 2 4 12-8 32 18z" fill="#7a8fb0" stroke="#2e3b55" stroke-width="2.5"/><path d="M-10-14l-6 10 5-2 4 3 4-4zM12-8l-5 7 4-1 3 2 3-3z" fill="#fff"/><path d="M-4 4l4-3 4 3v6h-8z" fill="#f2c12c" stroke="#7a5a00" stroke-width="1.5"/>`;
+  if(id==="username") return `<path d="M-32 14h64" stroke="#6a3a18" stroke-width="5"/><path d="M-30 14q30-34 60 0" fill="none" stroke="#ec8a22" stroke-width="6"/><path d="M-20 14v-12M-8 14v-19M4 14v-19M16 14v-12" stroke="#ec8a22" stroke-width="3"/><text x="0" y="-16" text-anchor="middle" font-family="Special Elite,monospace" font-size="13" fill="#2a1c12">@user</text>`;
+  if(id==="lottery") return `<path d="M-32 6q8-8 16 0t16 0 16 0 16 0v14h-64z" fill="#2c76c6"/><rect x="-12" y="-22" width="26" height="16" rx="2" fill="#f2c12c" stroke="#7a5a00" stroke-width="2" transform="rotate(-12)"/><text x="1" y="-10" text-anchor="middle" font-family="Lilita One,sans-serif" font-size="9" fill="#7a5a00" transform="rotate(-12)">RAFFLE</text>`;
+  if(id==="thicket") return `<circle cx="-14" cy="6" r="14" fill="#3c9a47"/><circle cx="8" cy="0" r="16" fill="#2f8139"/><circle cx="20" cy="10" r="11" fill="#3c9a47"/><path d="M-26-10l50 26" stroke="#d63a3a" stroke-width="4"/><text x="0" y="-18" text-anchor="middle" font-family="Special Elite,monospace" font-size="12" fill="#d63a3a">comment</text>`;
+  if(id==="finalize") return `<path d="M-26-20h22v40h-22z" fill="#9a7b5a"/><path d="M-4-20q14 0 14 14v34h-14z" fill="#7cc6f2"/><path d="M0-12v32M5-8v28" stroke="#fff" stroke-width="2"/><ellipse cx="10" cy="22" rx="20" ry="5" fill="#7cc6f2"/><rect x="12" y="-24" width="22" height="12" rx="3" fill="#fff" stroke="#2a1c12" stroke-width="2"/><text x="23" y="-15" text-anchor="middle" font-family="Atkinson Hyperlegible,sans-serif" font-size="7" font-weight="700" fill="#2a1c12">FINISH</text>`;
+  return "";
+}
+const LABEL_DY={"minors": {"dx": -19, "dy": 90}, "lottery": {"dx": -21, "dy": -90}, "username": {"dx": 90, "dy": -21}, "thicket": {"dx": -165, "dy": 5}, "finalize": {"dx": -150, "dy": -10}};
+function tag(x,y,text,w,size){size=size||22;return `<g transform="translate(${x} ${y})"><rect x="${-w/2}" y="${-size*.85}" width="${w}" height="${size*1.55}" rx="6" fill="#fcf8ee" stroke="#6a5644" stroke-width="2.5" stroke-dasharray="5 3"/><text y="${size*.3}" text-anchor="middle" font-family="Special Elite,monospace" font-size="${size}" fill="#2a1c12">${text}</text></g>`;}
+function drawBoard(){
+  const svg=document.getElementById("board");let s="";let labels="";const W=48;
+  s+=`<defs><filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>
+   <pattern id="grass" width="26" height="26" patternUnits="userSpaceOnUse"><rect width="26" height="26" fill="#7f9339"/><path d="M4 20l3-8 2 8M15 12l3-8 2 8M20 24l2-6 2 6" stroke="#6b8530" stroke-width="2" fill="none"/><circle cx="9" cy="5" r="2" fill="#93a64a"/></pattern>
+</defs>`;
+  // candy-tile path: cream rim, soft shadow, beveled tiles, cream gaps between tiles
+  const shade=(h,f)=>{const n=parseInt(h.slice(1),16);let c=[n>>16,n>>8&255,n&255];const t=f<0?0:255,q=Math.abs(f);c=c.map(v=>Math.round(v+(t-v)*q));return `rgb(${c})`;};
+  let sh="",rim="",til="";
+  NODES.segs.forEach((d,k)=>{const W=NODES.wid[k];const pos=k-1;let fill="#fff1ec";
+    if(pos>=0&&pos<N&&SQUARES[pos].type==="color")fill=COLORS[SQUARES[pos].color].hex;
+    const P=`d="${d}" fill="none" stroke-linejoin="round"`;
+    sh+=`<path ${P} stroke="rgba(70,45,20,.30)" stroke-width="${W+16}" transform="translate(4 9)"/>`;
+    rim+=`<path ${P} stroke="#fffaf2" stroke-width="${W+12}"/>`;
+    til+=`<path ${P} stroke="${shade(fill,-.22)}" stroke-width="${W-2}"/>`+
+      `<path ${P} stroke="${fill}" stroke-width="${W-12}"/>`+
+      `<path ${P} stroke="${shade(fill,.5)}" stroke-opacity=".45" stroke-width="${W*.5}" transform="translate(-2 -3)"/>`+
+      `<path ${P} stroke="${fill}" stroke-opacity=".55" stroke-width="${W*.34}" transform="translate(1 2)"/>`+
+      `<path ${P} stroke="#fff" stroke-opacity=".35" stroke-width="${W*.1}" stroke-linecap="round" transform="translate(-9 -13)"/>`;});
+  s+=sh+rim+til;
+  NODES.seps.forEach(([x,y,a,W])=>{s+=`<g transform="translate(${x} ${y}) rotate(${a})"><rect x="-4.5" y="${-W/2-6}" width="9" height="${W+12}" rx="3" fill="#fffaf2"/></g>`;});
+  // start: research idea lightbulb
+  const st=NODES.pts[0];
+  s+=`<image href="assets/start-marker.png" x="${st[0]-27}" y="${st[1]-42}" width="53" height="84"/>`;
+  labels+=tag(977,1104,"Start: Research Idea",270,22);
+  SQUARES.forEach((sq,i)=>{if(sq.type!=="land")return;const p=NP(i);const L=LANDMARKS[sq.id];
+    s+=sq.id==="minors"?`<image href="assets/sprites/cone.png" x="${p[0]-24}" y="${p[1]-70}" width="48" height="74"/>`:`<image href="assets/badge-${sq.id}.png" x="${p[0]-34}" y="${p[1]-35}" width="68" height="71"/>`;
+    const dy=LABEL_DY[sq.id]||76;labels+=tag(p[0]+(dy.dx||0),p[1]+(dy.dy||dy),L.name,L.name.length*13+34,22);});
+  // finish: the castle steps
+  labels+=tag(196,352,"IRB Castle",150,21);
+  s+=labels;svg.innerHTML=s;
+  const sp=document.getElementById("sprites");sp.innerHTML="";
+  DECOR.forEach(o=>{const d=document.createElement("div");d.className="decor";d.style.left=o.x+"px";d.style.top=o.y+"px";
+    d.innerHTML=`<img src="assets/sprites/${o.n}.png" alt="" style="width:${o.w}px;height:${o.h}px;left:${-o.w/2}px;bottom:${-(o.ay||0)*o.h}px;transform-origin:50% ${((1-(o.ay||0))*100).toFixed(1)}%">`;sp.appendChild(d);});
+  TEAMS.forEach(t=>{const d=document.createElement("div");d.className="pawn";d.id="pawn-"+t.id;d.innerHTML=`<div class="shadow"></div><div class="fig">${pawnSVG(t.id,68)}</div>`;sp.appendChild(d);});
+}
+
+/* ---------- Pawns on the board and the camera ---------- */
+const OFFS=[[-20,-6],[-7,6],[7,-6],[20,6]];
+const VW=990,VH=766,TILT=18,OVER={x:600,y:610,z:.62};
+const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let cam={...OVER};
+function setCam(x,y,z,dur){cam={x,y,z};const pl=document.getElementById("plane");
+  pl.style.transition=reduceMotion?"none":`transform ${dur==null?.8:dur}s cubic-bezier(.3,.7,.2,1)`;
+  pl.style.transform=`translate(${VW/2}px,${VH*.5}px) scale(${z}) rotateX(${TILT}deg) translate(${-x}px,${-y}px)`;}
+function overview(dur){setCam(OVER.x,OVER.y,OVER.z,dur);}
+function pawnXY(ti,pos){const p=NODES.pts[pos+1];const o=OFFS[ti];return {x:p[0]+o[0],y:p[1]+o[1]};}
+function setPawn(ti,x,y,hop){const el=document.getElementById("pawn-"+TEAMS[ti].id);el.style.left=x+"px";el.style.top=y+"px";el.dataset.x=x;el.dataset.y=y;
+  el.querySelector(".fig").style.setProperty("--hop",(hop||0)+"px");}
+function placePawn(ti,pos){const {x,y}=pawnXY(ti,pos);setPawn(ti,x,y,0);}
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+function hopTo(ti,x,y,dur,height){return new Promise(res=>{const el=document.getElementById("pawn-"+TEAMS[ti].id);const sx=+el.dataset.x,sy=+el.dataset.y;
+  if(reduceMotion){setPawn(ti,x,y,0);res();return;}
+  const t0=performance.now();function fr(now){const t=Math.min(1,(now-t0)/dur);const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    setPawn(ti,sx+(x-sx)*e,sy+(y-sy)*e,-Math.sin(Math.PI*t)*height);if(t<1)requestAnimationFrame(fr);else res();}requestAnimationFrame(fr);});}
+async function movePawn(ti,path,jump){
+  const el=document.getElementById("pawn-"+TEAMS[ti].id);document.querySelectorAll(".pawn").forEach(p=>p.classList.remove("mover"));el.classList.add("mover");
+  setCam(+el.dataset.x,+el.dataset.y,1.05,.7);await wait(reduceMotion?0:750);
+  for(const pos of path){const {x,y}=pawnXY(ti,pos);const d=jump?900:(path.length>6?230:330);
+    setCam(x,y,1.05,d/1000*1.1);await hopTo(ti,x,y,d,jump?140:46);}
+  await wait(reduceMotion?0:350);
+}
+
+/* ---------- State ---------- */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function newDeck(){const d=[];CKEYS.forEach(c=>{for(let i=0;i<4;i++)d.push({kind:"single",color:c});d.push({kind:"double",color:c});});
+  Object.keys(LANDMARKS).forEach(l=>d.push({kind:"picture",land:l}));return shuffle(d);}
+function fresh(){return {teams:TEAMS.map(()=>({pos:-1,asked:0})),turn:0,deck:newDeck(),
+  single:shuffle(SINGLE.map((_,i)=>i)),double:shuffle(DOUBLE.map((_,i)=>i)),land:{minors:0,username:0,lottery:0,thicket:0,finalize:0},started:false,winner:null};}
+let S=fresh();let history=[];let busy=false;let current=null;
+const KEY="irbland-v4";
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function load(){try{const v=localStorage.getItem(KEY);if(v){const o=JSON.parse(v);if(o&&o.teams&&o.teams.length===4)S=o;}}catch(e){}}
+
+/* ---------- Side panel ---------- */
+function subLines(t){return [t.form,t.tag,t.fine?`<small class="fine">${t.fine}</small>`:"",t.tag2].filter(Boolean).join("<br>");}
+function cheerSVG(id){
+  const g="#b8743d",gd="#6a3a18";
+  const limb=d=>`<path d="${d}" stroke="${gd}" stroke-width="12.5" stroke-linecap="round" fill="none"/><path d="${d}" stroke="${g}" stroke-width="8.5" stroke-linecap="round" fill="none"/>`;
+  let la=limb("M21 33L9 45"),ra=limb("M39 33L51 45"),ll=limb("M26 55L20 74"),rl=limb("M34 55L40 74"),torso="",head="",top="",behind="";
+  torso=`<rect x="17" y="26" width="26" height="33" rx="12" fill="${g}" stroke="${gd}" stroke-width="2.5"/>`;
+  head=`<circle cx="30" cy="16" r="12" fill="${g}" stroke="${gd}" stroke-width="2.5"/>`;
+  const face=`<circle cx="26" cy="14" r="1.8" fill="#fff"/><circle cx="34" cy="14" r="1.8" fill="#fff"/><path d="M24.5 19q5.5 5 11 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  const btn=`<circle cx="30" cy="38" r="2" fill="#fff"/><circle cx="30" cy="46" r="2" fill="#fff"/>`;
+  if(id==="exempt"){
+    ll+=`<rect x="12" y="73" width="15" height="5" rx="2" fill="#1f9e86"/><circle cx="15" cy="80.5" r="2.6" fill="#333"/><circle cx="24" cy="80.5" r="2.6" fill="#333"/>`;
+    rl+=`<rect x="33" y="73" width="15" height="5" rx="2" fill="#1f9e86"/><circle cx="36" cy="80.5" r="2.6" fill="#333"/><circle cx="45" cy="80.5" r="2.6" fill="#333"/>`;
+    ra+=`<rect x="46" y="38" width="12" height="15" rx="1.5" fill="#fff" stroke="#333" stroke-width="1.5"/><path d="M48.5 45l2.5 3 5-6" stroke="#1f9e86" stroke-width="2" fill="none"/>`;
+    top=`<path d="M20 28h20l-3 5H23z" fill="#1f9e86" stroke="#0f5f50" stroke-width="1.5"/>`+btn;head+=face;}
+  else if(id==="expedited"){
+    la+=`<g transform="rotate(-20 8 46)"><rect x="5" y="28" width="6" height="24" fill="#f2c12c" stroke="#7a5a00" stroke-width="1.2"/><rect x="5" y="25" width="6" height="4" fill="#e98fb9" stroke="#7a5a00" stroke-width="1.2"/><path d="M5 52l3 6 3-6z" fill="#f3d8b0" stroke="#7a5a00" stroke-width="1.2"/></g>`;
+    ra+=`<rect x="46" y="38" width="13" height="34" rx="3" fill="#fff8e6" stroke="#6a3a18" stroke-width="1.5"/><path d="M49 44h7M49 49h7M49 54h7M49 59h7M49 64h7" stroke="#c2338f" stroke-width="1.3"/>`;
+    top=`<path d="M22 29l8 4 8-4-2 4h-12z" fill="#c2338f"/>`+btn;head+=face;}
+  else if(id==="nhsr"){
+    head+=`<line x1="30" y1="4" x2="30" y2="-3" stroke="#555" stroke-width="2.5"/><circle cx="30" cy="-4" r="3.2" fill="#e8434d" stroke="#555" stroke-width="1.5"/><rect x="21" y="10" width="18" height="8" rx="3" fill="#7fd4f0" stroke="#2c5d7a" stroke-width="1.5"/>`;
+    top=`<rect x="23" y="34" width="14" height="12" rx="2" fill="#c9d3dc" stroke="#55626e" stroke-width="1.5"/><circle cx="27" cy="40" r="1.6" fill="#e8434d"/><circle cx="33" cy="40" r="1.6" fill="#3c9a47"/>`;
+    la+=`<circle cx="21" cy="33" r="2" fill="#55626e"/>`;ra+=`<circle cx="39" cy="33" r="2" fill="#55626e"/>`;}
+  else if(id==="full"){
+    top=`<path d="M18 30l12-3 12 3 3 30H15z" fill="#f7f7f4" stroke="#8a8a8a" stroke-width="1.5"/><path d="M30 28l-5 13M30 28l5 13" stroke="#b9b9b9" stroke-width="1.5"/>
+      <path d="M24 29q-2 10 4 14q6 2 9-6" stroke="#55626e" stroke-width="1.8" fill="none"/><circle cx="37" cy="37" r="2.6" fill="#c9d3dc" stroke="#55626e" stroke-width="1.2"/>`;
+    head+=`<path d="M23 13.5h6M31 13.5h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M23.5 15q2.5 2 5 0M31.5 15q2.5 2 5 0" stroke="#fff" stroke-width="1.4" fill="none"/><path d="M26 22.5q4-1.5 8 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M18.5 8.5q11.5-6 23 0" stroke="#55626e" stroke-width="1.6" fill="none"/><circle cx="30" cy="6.5" r="4" fill="#dfe6ec" stroke="#55626e" stroke-width="1.4"/>`;
+    la+=`<g transform="translate(2 1) rotate(-8 7 45)"><path d="M7 21.5v-9" stroke="#8a8a8a" stroke-width="1.1"/><rect x="3" y="24" width="8" height="19" rx="1.5" fill="#eef7fb" stroke="#55626e" stroke-width="1.2"/><rect x="3.6" y="33" width="6.8" height="9.4" rx="1" fill="#c8202f"/><rect x="1" y="42.5" width="12" height="2.2" rx="1" fill="#c9d3dc" stroke="#55626e" stroke-width=".8"/><path d="M7 44.7v7" stroke="#55626e" stroke-width="1.6"/></g>`;
+    ra+=`<rect x="46" y="34" width="14" height="52" rx="3" fill="#fff8e6" stroke="#6a3a18" stroke-width="1.5"/><path d="M49 40h8M49 45h8M49 50h8M49 55h8M49 60h8M49 65h8M49 70h8M49 75h8M49 80h8" stroke="#2c76c6" stroke-width="1.3"/>`;}
+  return `<svg viewBox="-14 -12 88 104" width="210" height="248" aria-hidden="true" style="overflow:visible">
+   <g class="all"><g class="legs"><g class="ll">${ll}</g><g class="rl">${rl}</g></g>
+   <g class="upper"><g class="la">${la}</g><g class="ra">${ra}</g>${torso}${top}<g class="hd">${head}</g></g></g></svg>`;}
+function cheer(ti){const gb=document.getElementById("gumball");if(!gb)return;const id=TEAMS[ti].id;
+  gb.innerHTML=`<div class="cheer c-${id}">${cheerSVG(id)}</div><div class="cheerword">Right!</div>`;}
+function renderTeams(){
+  const t=TEAMS[S.turn];
+  document.getElementById("turnBox").innerHTML=`<div class="pop e-${t.id}"><div class="move m-${t.id}">${pawnSVG(t.id,150)}</div></div><div><div class="yt">Your turn</div><div class="who">${t.name}${t.star?"*":""}</div><div class="form">${subLines(t)}</div></div>`;
+}
+function cardFace(card){
+  const f=document.getElementById("cardFront");
+  if(card.kind==="single"){const c=COLORS[card.color];f.innerHTML=`<div class="swatch" style="height:196px;background:${c.hex}"></div><div class="cardname">${c.name}</div>`;}
+  else if(card.kind==="double"){const c=COLORS[card.color];f.innerHTML=`<div class="swatch" style="height:92px;background:${c.hex}"></div><div class="swatch" style="height:92px;background:${c.hex}"></div><div class="cardname">Double ${c.name}</div>`;}
+  else {f.innerHTML=`<img src="assets/${card.land==="minors"?"sprites/cone.png":"badge-"+card.land+".png"}" alt="" style="width:82px;height:84px;object-fit:contain"><div class="cardname">${LANDMARKS[card.land].name}</div>`;}
+}
+
+/* ---------- Turn logic ---------- */
+function nextOfColor(from,color){for(let i=from+1;i<N;i++){if(SQUARES[i].type==="color"&&SQUARES[i].color===color)return i;}return null;}
+function planMove(ti,card){
+  const st=S.teams[ti];const from=st.pos;let to=from,wrongTo=from,note="";
+  if(card.kind==="picture"){
+    const L=LANDMARKS[card.land].at;
+    if(L>from){to=L;} else {to=from;wrongTo=L;note="This landmark is behind you. Answer right to stay where you are; answer wrong and you slide back to "+LANDMARKS[card.land].name+".";}
+  } else {
+    let p=from;const steps=card.kind==="double"?2:1;let end=false;
+    for(let k=0;k<steps;k++){const n=nextOfColor(p,card.color);if(n===null){end=true;break;}p=n;}
+    if(end){to=N;}
+    else to=p;
+  }
+  return {from,to,wrongTo,note};
+}
+function pickQuestion(card){
+  if(card.kind==="picture"){const arr=LANDQ[card.land];const q=arr[S.land[card.land]%arr.length];S.land[card.land]++;return Object.assign({kind:"choice",label:"Landmark · "+LANDMARKS[card.land].name},q);}
+  if(card.kind==="double"){if(!S.double.length)S.double=shuffle(DOUBLE.map((_,i)=>i));const q=DOUBLE[S.double.shift()];
+    return Object.assign({kind:"choice",label:"Double card · HRP-255 Section 1: Exemption categories",prompt:"Which exemption category fits best?"},q);}
+  if(!S.single.length)S.single=shuffle(SINGLE.map((_,i)=>i));return SINGLE[S.single.shift()];
+}
+function pathBetween(a,b){const out=[];if(b>a){for(let i=a+1;i<=b;i++)out.push(i);}else if(b<a){for(let i=a-1;i>=b;i--)out.push(i);}return out;}
+async function draw(){
+  if(busy||S.winner!==null||!S.started)return;busy=true;
+  history.push(JSON.stringify(S));if(history.length>30)history.shift();
+  if(!S.deck.length)S.deck=newDeck();
+  const card=S.deck.shift();const ti=S.turn;
+  const flip=document.getElementById("flip");flip.classList.remove("show");
+  document.getElementById("deck").classList.remove("ready");
+  setTimeout(()=>{cardFace(card);flip.classList.add("show");},60);
+  const mv=planMove(ti,card);const q=pickQuestion(card);current={ti,card,mv,q};
+  const label=card.kind==="picture"?LANDMARKS[card.land].name:(card.kind==="double"?"Double ":"")+COLORS[card.color].name;
+  document.getElementById("hint").textContent=TEAMS[ti].name+" drew "+label+".";
+  await wait(800);
+  const jump=card.kind==="picture"&&mv.to!==mv.from;
+  await movePawn(ti,jump?[mv.to]:pathBetween(mv.from,mv.to),jump);
+  openQuestion();
+}
+
+/* ---------- Question card ---------- */
+let picks=new Set();let checked=false;
+function openQuestion(){
+  const {q,mv,card}=current;picks=new Set();checked=false;
+  const color=card.kind==="picture"?"#2a1c12":COLORS[card.color].hex;const dark=card.kind!=="picture"&&card.color==="yellow";
+  let h=`<div class="tape"></div><div style="min-width:0"><span class="qlabel" style="background:${color};color:${dark?"#2a1c12":"#fff"}">${q.label}</span>`;
+  h+=`<p class="scenario">${q.scenario}</p><p class="prompt">${q.prompt||""}</p>`;
+  if(mv.note)h+=`<p class="note" style="font-size:17px;margin:-4px 0 10px">${mv.note}</p>`;
+  if(q.kind==="boxes"){h+=`<div class="formbox"><div class="fhead">${q.head} <span>${q.sub||""}</span></div>`+q.opts.map((o,i)=>`<button type="button" class="opt" data-i="${i}" id="opt${i}"><span class="box"></span><span>${o[0]}</span></button>`).join("")+`</div>`;}
+  else {h+=`<div class="choices">`+q.opts.map((o,i)=>`<button type="button" class="choice" data-i="${i}" id="opt${i}">${o}</button>`).join("")+`</div>`;}
+  h+=`<div id="resultBox"></div><div class="actions" id="qActions"><button class="big" id="checkBtn" type="button">Check answer</button></div></div>`;
+  h+=`<div class="gumball" id="gumball" aria-label="30 second timer">${machineSVG()}<div class="timesup" id="timesup">Time!</div></div>`;
+  const qc=document.getElementById("qcard");qc.innerHTML=h;qc.scrollTop=0;document.getElementById("qOv").hidden=false;
+  qc.querySelectorAll("[data-i]").forEach(b=>b.addEventListener("click",()=>{if(checked)return;const i=+b.dataset.i;
+    if(q.kind==="boxes"){picks.has(i)?picks.delete(i):picks.add(i);b.classList.toggle("on",picks.has(i));}
+    else {picks=new Set([i]);qc.querySelectorAll(".choice").forEach(x=>x.classList.toggle("on",+x.dataset.i===i));}}));
+  document.getElementById("checkBtn").addEventListener("click",checkAnswer);
+  startTimer();
+}
+function grade(q){
+  if(q.kind==="boxes"){const need=q.opts.map((o,i)=>o[1]===1?i:-1).filter(i=>i>=0);const okk=new Set(q.opts.map((o,i)=>o[1]?i:-1).filter(i=>i>=0));
+    return picks.size>0&&need.every(i=>picks.has(i))&&[...picks].every(i=>okk.has(i));}
+  return picks.size===1&&q.ans.includes([...picks][0]);
+}
+function checkAnswer(){
+  if(checked)return;checked=true;stopTimer();
+  const {q,mv,ti}=current;const ok=grade(q);
+  document.querySelectorAll("#qcard [data-i]").forEach(b=>{const i=+b.dataset.i;
+    const isRight=q.kind==="boxes"?!!q.opts[i][1]:q.ans.includes(i);
+    if(isRight&&(picks.has(i)||(q.kind==="boxes"?q.opts[i][1]===1:true)))b.classList.add("right");
+    if(picks.has(i)&&!isRight)b.classList.add("wrongpick");
+    if(q.kind==="boxes"&&q.opts[i][1]===1&&!picks.has(i))b.classList.add("missed");});
+  const t=TEAMS[ti].name;let msg;
+  if(ok)msg=mv.to>=N?`${t} enters IRB Castle!`:(mv.to===mv.from?`${t} stays put.`:`${t} stays on the new square.`);
+  else msg=mv.wrongTo===mv.from?`${t} goes back to where it was.`:`${t} slides back to ${LANDMARKS[current.card.land].name}.`;
+  document.getElementById("resultBox").innerHTML=`<div class="result ${ok?"good":"bad"}"><strong>${ok?"Right!":"Not quite."}</strong>${q.why}<br><b>${msg}</b></div>`;
+  current.ok=ok;if(ok){xylophone();cheer(ti);}
+  document.getElementById("qActions").innerHTML=`<button class="big" id="doneBtn" type="button">${ok&&mv.to>=N?"See the winner":"Next team"}</button>`;
+  document.getElementById("doneBtn").addEventListener("click",finishTurn);
+  const qc=document.getElementById("qcard");qc.scrollTop=qc.scrollHeight;
+}
+async function finishTurn(){
+  const {ti,mv,ok}=current;document.getElementById("qOv").hidden=true;
+  const st=S.teams[ti];st.asked++;
+  if(ok){st.pos=mv.to;}
+  else {const back=mv.wrongTo;st.pos=back;const path=pathBetween(mv.to,back);await movePawn(ti,path.length?path:[back],false);}
+  if(ok&&mv.to>=N){S.winner=ti;save();renderTeams();await climbCastle(ti);showWin(ti);busy=false;return;}
+  S.turn=(S.turn+1)%4;save();renderTeams();busy=false;overview();
+  document.querySelectorAll(".pawn").forEach(p=>p.classList.remove("mover"));
+  document.getElementById("deck").classList.add("ready");document.getElementById("flip").classList.remove("show");
+  document.getElementById("hint").textContent="Click the deck to draw a card.";
+}
+
+/* ---------- Gumball timer ---------- */
+function machineSVG(){return `<img class="machine" src="assets/gumball-machine.png" alt=""><div class="globe" id="globe"></div>`;}
+const GLOBE_SPOTS=(function(){const out=[],cx=72.5,cy=57.5,rx=62,ry=47,d=19;
+  for(let row=0;row<12;row++){const y=cy+ry-row*d*0.87;for(let x=cx-rx;x<=cx+rx;x+=d){const xx=x+(row%2?d/2:0);
+    if(((xx-cx)/rx)**2+((y-cy)/ry)**2<=1)out.push({x:xx,y});}}
+  return out.sort((a,b)=>b.y-a.y||Math.abs(a.x-cx)-Math.abs(b.x-cx)).slice(0,31);})();
+function fillGlobe(){const g=document.getElementById("globe");if(!g)return;
+  g.innerHTML=GLOBE_SPOTS.map(p=>{const c=CKEYS[Math.floor(Math.random()*6)];return `<span class="gb" data-c="${c}" style="left:${p.x.toFixed(1)}px;top:${p.y.toFixed(1)}px;background:${COLORS[c].hex}"></span>`;}).join("");}
+let tInt=null,tLeft=30,lastColor="";
+function dropBall(n){
+  const g=document.getElementById("gumball");if(!g)return;
+  g.querySelectorAll(".gball:not(.old)").forEach(b=>b.classList.add("old"));
+  const olds=[...g.querySelectorAll(".gball.old")];olds.forEach((b,i)=>{const k=olds.length-1-i;b.style.top=(392+(k%2)*16)+"px";b.style.left=(64+(k%5)*26)+"px";if(k>9)b.remove();});
+  let c;const left=[...g.querySelectorAll(".gb:not(.gone)")];
+  if(left.length){const top=left[left.length-1];c=top.dataset.c;top.classList.add("gone");setTimeout(()=>top.remove(),500);}
+  else{const keys=CKEYS.filter(k=>k!==lastColor);c=keys[Math.floor(Math.random()*keys.length)];}lastColor=c;
+  const b=document.createElement("div");b.className="gball"+(c==="yellow"?" dark":"");b.style.background=COLORS[c].hex;b.textContent=n;b.setAttribute("aria-hidden","true");
+  g.appendChild(b);g.setAttribute("aria-label",n+" seconds left");
+}
+function startTimer(){stopTimer();tLeft=30;lastColor="";fillGlobe();dropBall(30);
+  tInt=setInterval(()=>{tLeft--;dropBall(tLeft);if(tLeft<=0){stopTimer();const ts=document.getElementById("timesup");if(ts)ts.classList.add("show");sadTrombone();}},1000);}
+function stopTimer(){if(tInt){clearInterval(tInt);tInt=null;}}
+
+/* ---------- Sound: xylophone run ---------- */
+let AC=null,soundOn=true;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){AC=null;}}if(AC&&AC.state==="suspended")AC.resume();return AC;}
+function bar(freq,t,len,vol){const a=ac();if(!a)return;
+  [[1,1],[3.98,.28],[9.2,.08]].forEach(([m,g])=>{const o=a.createOscillator(),v=a.createGain();o.type="sine";o.frequency.value=freq*m;
+    v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(vol*g,t+.004);v.gain.exponentialRampToValueAtTime(.0001,t+len*(m>1?.35:1));
+    o.connect(v).connect(a.destination);o.start(t);o.stop(t+len+.05);});}
+function xylophone(){if(!soundOn)return;const a=ac();if(!a)return;const t=a.currentTime+.02;
+  const run=[523.25,587.33,659.25,698.46,783.99,880,987.77,1046.5];run.forEach((f,i)=>bar(f,t+i*.075,.45,.32));
+  bar(2093,t+run.length*.075+.05,1.6,.42);bar(2637,t+run.length*.075+.05,1.6,.18);}
+
+
+function horn(f0,f1,t,len,vib){const a=ac();if(!a)return;
+  const out=a.createGain();out.gain.setValueAtTime(0,t);out.gain.linearRampToValueAtTime(.28,t+.05);
+  out.gain.setValueAtTime(.28,t+len-.12);out.gain.linearRampToValueAtTime(0,t+len);
+  const lp=a.createBiquadFilter();lp.type="lowpass";lp.Q.value=7;
+  lp.frequency.setValueAtTime(350,t);lp.frequency.linearRampToValueAtTime(1500,t+Math.min(.18,len*.4));lp.frequency.linearRampToValueAtTime(650,t+len);
+  lp.connect(out).connect(a.destination);
+  [0,-7].forEach(dt=>{const o=a.createOscillator();o.type="sawtooth";o.detune.value=dt;
+    o.frequency.setValueAtTime(f0,t);o.frequency.linearRampToValueAtTime(f1,t+len);
+    if(vib){const l=a.createOscillator(),lg=a.createGain();l.frequency.value=5.5;lg.gain.setValueAtTime(0,t);lg.gain.linearRampToValueAtTime(f0*.03,t+.4);l.connect(lg).connect(o.frequency);l.start(t);l.stop(t+len+.05);}
+    o.connect(lp);o.start(t);o.stop(t+len+.05);});}
+function sadTrombone(){if(!soundOn)return;const a=ac();if(!a)return;const t=a.currentTime+.02;
+  horn(293.66,290,t,.42);horn(277.18,274,t+.5,.42);horn(261.63,258,t+1,.42);horn(246.94,236,t+1.5,1.5,true);}
+
+function fanfare(){if(!soundOn)return;const a=ac();if(!a)return;const t=a.currentTime+.05;
+  const N=[[392,.14,0],[392,.14,.17],[392,.14,.34],[523.25,.5,.51],[659.25,.18,1.08],[587.33,.14,1.29],[659.25,.18,1.46],[783.99,1.3,1.68]];
+  N.forEach(([f,l,o])=>horn(f,f,t+o,l,l>1));
+  [[261.63],[329.63],[392]].forEach(([f])=>horn(f,f,t+1.68,1.3,false));
+  bar(1046.5,t+1.68,1.4,.25);bar(1318.5,t+1.68,1.4,.15);}
+async function climbCastle(ti){const el=document.getElementById("pawn-"+TEAMS[ti].id);
+  document.querySelectorAll(".pawn").forEach(p=>p.classList.remove("mover"));el.classList.add("mover");
+  fanfare();setCam(347,285,1.5,1);await wait(reduceMotion?0:700);
+  const steps=[[347,312],[347,300],[347,288],[347,276],[346,258]];
+  for(const [x,y] of steps){await hopTo(ti,x,y,reduceMotion?0:300,26);await wait(reduceMotion?0:60);}
+  if(!reduceMotion){el.style.transition="opacity .8s, transform .8s";el.style.opacity="0";await wait(900);}
+  await wait(reduceMotion?0:400);el.style.transition="";el.style.opacity="";}
+
+/* ---------- Win: IRB Castle ---------- */
+function showWin(ti){
+  const t=TEAMS[ti];
+  document.getElementById("winBox").innerHTML=`<div>${pawnSVG(t.id,86)}</div>
+   <div><h2>${t.name} made it to IRB Castle!</h2><p>Which form will your mini prospectus study need, and which boxes on it will be hardest for you?</p>
+   <p class="note" style="margin-top:6px">Answers follow UCF's August 2025 HRP-255, HRP-254, and HRP-503 templates and UCF IRB guidance. The IRB office makes the final determination for every study.</p></div>
+   <div><button class="big alt" id="againBtn" type="button">Play again</button></div>`;
+  document.getElementById("winOv").hidden=false;
+  document.getElementById("againBtn").addEventListener("click",()=>{document.getElementById("winOv").hidden=true;reset(true);});
+}
+
+/* ---------- Scaling and landscape ---------- */
+function fit(){const de=document.documentElement,w=de.clientWidth||window.innerWidth,h=de.clientHeight||window.innerHeight,st=document.getElementById("stage");
+  if(h>w){const s=Math.min(w/900,h/1600);st.style.transform=`translate(-50%,-50%) rotate(90deg) scale(${s})`;}
+  else{const s=Math.min(w/1600,h/900);st.style.transform=`translate(-50%,-50%) scale(${s})`;}}
+window.addEventListener("resize",fit);window.addEventListener("orientationchange",()=>setTimeout(fit,200));
+async function goLandscape(){
+  const small=Math.min(screen.width,screen.height)<700&&matchMedia("(pointer: coarse)").matches;if(!small)return;
+  try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();}catch(e){}
+  try{if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock("landscape");}catch(e){}
+  fit();
+}
+
+/* ---------- Controls ---------- */
+function syncSign(){document.getElementById("sign").hidden=!document.getElementById("startOv").hidden;}
+function reset(started){S=fresh();S.started=!!started;history=[];busy=false;save();TEAMS.forEach((t,i)=>placePawn(i,-1));renderTeams();overview(.6);
+  document.getElementById("flip").classList.remove("show");document.getElementById("deck").classList.add("ready");document.getElementById("hint").textContent="Click the deck to draw a card.";}
+document.getElementById("deck").addEventListener("click",draw);
+document.getElementById("startBtn").addEventListener("click",()=>{ac();goLandscape();S.started=true;save();document.getElementById("startOv").hidden=true;syncSign();});
+document.getElementById("soundBtn").addEventListener("click",e=>{soundOn=!soundOn;e.currentTarget.setAttribute("aria-pressed",soundOn);e.currentTarget.textContent="Sound: "+(soundOn?"on":"off");if(soundOn)ac();});
+document.getElementById("undoBtn").addEventListener("click",()=>{if(!document.getElementById("qOv").hidden){stopTimer();document.getElementById("qOv").hidden=true;}
+  const prev=history.pop();if(!prev)return;S=JSON.parse(prev);busy=false;save();TEAMS.forEach((t,i)=>placePawn(i,S.teams[i].pos));renderTeams();overview(.6);
+  document.getElementById("flip").classList.remove("show");document.getElementById("deck").classList.add("ready");document.getElementById("hint").textContent="Turn undone. Click the deck to draw a card.";});
+let confirmNew=false;
+document.getElementById("newBtn").addEventListener("click",e=>{const b=e.currentTarget;if(!confirmNew){confirmNew=true;b.textContent="Click again to reset";setTimeout(()=>{confirmNew=false;b.textContent="New game";},3000);return;}
+  confirmNew=false;b.textContent="New game";stopTimer();document.getElementById("qOv").hidden=true;document.getElementById("winOv").hidden=true;reset(true);});
+
+document.getElementById("lineup").innerHTML=TEAMS.map(t=>`<div>${pawnSVG(t.id,70)}<b>${t.name}${t.star?"*":""}</b>${subLines(t)}</div>`).join("");
+fit();load();drawBoard();TEAMS.forEach((t,i)=>placePawn(i,S.teams[i].pos));renderTeams();overview(0);
+if(S.started&&S.winner===null){document.getElementById("startOv").hidden=true;}
+if(S.winner!==null&&S.winner!==undefined){document.getElementById("startOv").hidden=true;showWin(S.winner);}
+syncSign();
+</script>
+</body>
+</html>
